@@ -1,5 +1,13 @@
 # 00 - Day-0 substrate gate
 
+> **Erratum, added with [05](./05-arm-b-corrected.md).** Two details in this note are wrong.
+> (1) The AgentDojo run layout is `runs/<pipeline>/<suite>/user_task_M/<attack>/injection_task_N.json`
+> (plus 804 `injection_task_N/none/none.json` canary runs), not the path written below.
+> (2) The #2108 fix was **not** "de-facto reverted": it is live on inspect_evals main and absent
+> from the released 0.18.0, and what #2285 rolled back was the *version recommendation* to 6-B.
+> The gate outcome - both defects are pure functions reachable with no harness, no model and no
+> network - held, and is what the deterministic arms rest on.
+
 Working record. Every line below was produced by running the command shown on this machine and
 reading its output. Nothing is remembered. Where a capability is absent it says so and says why.
 

@@ -1,0 +1,72 @@
+name: ci
+
+# Everything here is deterministic and offline. The model layer is pure, Arm A runs the vendored
+# graders over a constructed corpus, and Arm B / Arm D run over the committed AgentDojo corpus - no
+# model API key, no network at test time, no paid calls. If a claim in RESULTS.md stops being true,
+# a job here goes red.
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install ${{ matrix.python-version }}
+      - name: sync
+        run: uv sync --group dev --python ${{ matrix.python-version }}
+      - name: ruff
+        run: uv run ruff check .
+      - name: mypy --strict
+        run: uv run mypy
+      - name: pytest
+        run: uv run pytest
+
+  fidelity:
+    # The claim that the vendored graders ARE the shipped graders, checked against the installed
+    # inspect_evals. Split out because it is the only job that installs the heavy optional extra.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - name: sync with the fidelity extra
+        run: uv sync --group dev --extra fidelity --python 3.12
+      - name: grader fidelity vs installed inspect_evals
+        run: uv run --extra fidelity pytest tests/test_graders_fidelity.py -q
+
+  arms:
+    # The published numbers, regenerated. `git diff --exit-code` fails if any arm's receipted
+    # evidence would change, so evidence/ can never drift from the code that produced it.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - run: uv sync --group dev --python 3.12
+      - name: the predicted disagreement matrix
+        run: uv run python -m judge_artifact.model
+      - name: Arm A - real graders over the constructed corpus
+        run: uv run python -m judge_artifact.harness.arm_a
+      - name: Arm B - decomposition on released AgentDojo transcripts
+        run: uv run python -m judge_artifact.harness.arm_b
+      - name: Arm B - defense axis
+        run: uv run python -m judge_artifact.harness.arm_b_defense
+      - name: Arm D - denominator policy
+        run: uv run python -m judge_artifact.harness.arm_d
+      - name: evidence must match the committed receipts
+        run: git diff --exit-code -- evidence/

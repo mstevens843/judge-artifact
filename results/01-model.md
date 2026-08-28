@@ -1,5 +1,12 @@
 # 01 - The model, before any exploit
 
+> **Erratum, added with [05](./05-arm-b-corrected.md).** This note describes the model as it stood
+> on 2026-08-27: six graders and eleven episodes, and it refers to gate episodes as `x14`/`x15`.
+> The model has since grown an argument-checking grader (`g_arg_match`) and two execution episodes
+> (`x06` argument-blind, `x07` effect-blind), and the gate episodes are `x20`-`x23`. It is now
+> **eight graders and fifteen episodes**. The reasoning below is unchanged and left as written;
+> `uv run python -m judge_artifact.model` prints the current matrix.
+
 Working record. The model layer is complete and self-verifying. It was written and tested with no
 grader running and no transcript on disk: it is a pure prediction, and the harness exists to try to
 prove it wrong.

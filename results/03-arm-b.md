@@ -1,5 +1,20 @@
 # 03 - Arm B, rank inversion on real AgentDojo data
 
+> [!CAUTION]
+> **SUPERSEDED by [05](./05-arm-b-corrected.md) and [06](./06-agentdojo-defense-axis.md). Do not
+> cite the numbers below.** Two of this note's three claims did not survive a corpus that keeps
+> tool-call arguments and errors:
+>
+> - The **+24 to +35 pp inflation was attributed to inspect_evals#2108**. The 216-run sample
+>   contained no errored calls at all, so #2108's mechanism contributed none of it; the gap was
+>   argument blindness. On the full corpus the decomposition is 12.4% error-blind, 69.0%
+>   argument-blind, 18.6% effect-blind.
+> - The **"ranking does not invert (Kendall tau 1.0)"** null was an artifact of four models on a
+>   216-run subset. Over all 28 released pipelines the released grader gives tau 0.68 and moves 23
+>   of 28 positions.
+>
+> The note is kept unedited below as the record of what was believed and why it was wrong.
+
 Working record. The execution defect now meets real released transcripts. Reproduce:
 
 ```

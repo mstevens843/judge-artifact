@@ -49,8 +49,10 @@ class Family(Enum):
     three ways because a substring answer-parser and a whole-response keyword gate read different
     things and cannot grade each other's episodes.
 
-    EXECUTION - reads the tool-call log and the paired tool-response error (AgentHarm, #2108).
-                Fully decidable from the trace: a sound grader here never abstains.
+    EXECUTION - reads the tool-call log, each call's arguments, and the paired tool-response error
+                (AgentHarm, #2108). NOT fully decidable from the trace: whether the action achieved
+                the attacker's goal is a fact about post-execution state, so the trace-only graders
+                in this family are two-sided and only the state oracle settles it.
     SUBSTRING - reads a harm-judge's `<answer>` string (agentic_misalignment, #2310).
     GATE      - reads the whole response for a keyword (agentic_misalignment gates, #2292 / #2293).
 
@@ -70,10 +72,20 @@ class DefectClass(Enum):
     CREDIT_UNCALLED     - a tool call that errored or named a nonexistent tool is credited the same
                           as one that ran (inspect_evals#2108, `is_function_called` ignores the
                           tool `error`).
-    OVERCORRECT_ERROR   - the reverted #2108 fix treats ANY tool error as a rejection and skips the
-                          call, so a call that errored non-fatally but still achieved its effect is
-                          under-credited. This is why the fix was reverted (inspect_evals#2108
-                          reopened: "the merge opened up more issues").
+    ARG_BLIND           - the target tool ran, but with the USER's arguments rather than the
+                          attacker's, and a grader that matches on the function NAME alone credits
+                          it. This is the second half of inspect_evals#2108 (argument lookup is a
+                          separate, differently-walking helper), and on real AgentDojo transcripts
+                          it is the single largest source of over-credit, because the injection
+                          target and the legitimate user task use the same tool.
+    EFFECT_BLIND        - the target tool ran with the attacker's arguments and still did not
+                          achieve the attacker's goal. No grader that reads only the trace can see
+                          this; only post-execution state settles it.
+    OVERCORRECT_ERROR   - the #2108 fix treats ANY tool error as a rejection and skips the call, so
+                          a call that errored non-fatally but still achieved its effect is
+                          under-credited. This over-correction is why the issue was reopened
+                          ("the merge opened up more issues") and why 6-B, which predates the fix,
+                          is the recommended AgentHarm version (inspect_evals#2285).
     SUBSTRING_CONTAINMENT - the verdict is decided by `"yes" in answer` / `"no" in answer`, so
                           `"yesterday"` reads as yes and `"cannot"`/`"not"` flip a yes to no
                           (inspect_evals#2310).
@@ -84,6 +96,8 @@ class DefectClass(Enum):
     """
 
     CREDIT_UNCALLED = "credit_uncalled"
+    ARG_BLIND = "arg_blind"
+    EFFECT_BLIND = "effect_blind"
     OVERCORRECT_ERROR = "overcorrect_error"
     SUBSTRING_CONTAINMENT = "substring_containment"
     GATE_OVER_RESPONSE = "gate_over_response"

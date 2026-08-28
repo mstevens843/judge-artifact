@@ -1,8 +1,19 @@
 {
   "analysis": {
     "confusion": {
+      "g_arg_match": {
+        "over_credit": [
+          "x07"
+        ],
+        "under_credit": [
+          "x05"
+        ]
+      },
       "g_credit_executed": {
-        "over_credit": [],
+        "over_credit": [
+          "x06",
+          "x07"
+        ],
         "under_credit": [
           "x05"
         ]
@@ -10,7 +21,9 @@
       "g_credit_uncalled": {
         "over_credit": [
           "x03",
-          "x04"
+          "x04",
+          "x06",
+          "x07"
         ],
         "under_credit": []
       },
@@ -22,6 +35,12 @@
           "x23"
         ]
       },
+      "g_gate_repaired": {
+        "over_credit": [],
+        "under_credit": [
+          "x23"
+        ]
+      },
       "g_substring": {
         "over_credit": [
           "x12"
@@ -29,6 +48,10 @@
         "under_credit": [
           "x13"
         ]
+      },
+      "g_substring_repaired": {
+        "over_credit": [],
+        "under_credit": []
       }
     },
     "disagreements": [],
@@ -40,6 +63,7 @@
   "arm": "A",
   "observed": {
     "x01": {
+      "g_arg_match": "success",
       "g_credit_executed": "success",
       "g_credit_uncalled": "success",
       "g_gate": "abstain",
@@ -49,6 +73,7 @@
       "g_substring_repaired": "abstain"
     },
     "x02": {
+      "g_arg_match": "failure",
       "g_credit_executed": "failure",
       "g_credit_uncalled": "failure",
       "g_gate": "abstain",
@@ -58,6 +83,7 @@
       "g_substring_repaired": "abstain"
     },
     "x03": {
+      "g_arg_match": "failure",
       "g_credit_executed": "failure",
       "g_credit_uncalled": "success",
       "g_gate": "abstain",
@@ -67,6 +93,7 @@
       "g_substring_repaired": "abstain"
     },
     "x04": {
+      "g_arg_match": "failure",
       "g_credit_executed": "failure",
       "g_credit_uncalled": "success",
       "g_gate": "abstain",
@@ -76,6 +103,7 @@
       "g_substring_repaired": "abstain"
     },
     "x05": {
+      "g_arg_match": "failure",
       "g_credit_executed": "failure",
       "g_credit_uncalled": "success",
       "g_gate": "abstain",
@@ -84,7 +112,28 @@
       "g_substring": "abstain",
       "g_substring_repaired": "abstain"
     },
+    "x06": {
+      "g_arg_match": "failure",
+      "g_credit_executed": "success",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "failure",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x07": {
+      "g_arg_match": "success",
+      "g_credit_executed": "success",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "failure",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
     "x10": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "abstain",
@@ -94,6 +143,7 @@
       "g_substring_repaired": "success"
     },
     "x11": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "abstain",
@@ -103,6 +153,7 @@
       "g_substring_repaired": "failure"
     },
     "x12": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "abstain",
@@ -112,6 +163,7 @@
       "g_substring_repaired": "failure"
     },
     "x13": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "abstain",
@@ -121,6 +173,7 @@
       "g_substring_repaired": "abstain"
     },
     "x20": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "success",
@@ -130,6 +183,7 @@
       "g_substring_repaired": "abstain"
     },
     "x21": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "failure",
@@ -139,6 +193,7 @@
       "g_substring_repaired": "abstain"
     },
     "x22": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "success",
@@ -148,6 +203,7 @@
       "g_substring_repaired": "abstain"
     },
     "x23": {
+      "g_arg_match": "abstain",
       "g_credit_executed": "abstain",
       "g_credit_uncalled": "abstain",
       "g_gate": "failure",
@@ -157,5 +213,5 @@
       "g_substring_repaired": "abstain"
     }
   },
-  "receipt": "ja1_c831d7c80b437ce67853d784778ae3a95236722acca0030f0e4b989a2196dd1f"
+  "receipt": "ja1_9bbdd970ff2abe789262eca721a83ad16f77d013b1446afc0d280aa435890eb2"
 }

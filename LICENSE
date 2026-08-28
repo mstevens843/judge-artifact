@@ -1,0 +1,37 @@
+MIT License
+
+Copyright (c) 2026 Mathew Stevens
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+THIRD-PARTY CODE VENDORED IN THIS REPOSITORY
+
+`src/judge_artifact/graders/vendored/` contains grader functions copied from
+UKGovernmentBEIS/inspect_evals, which is MIT licensed. Each file names the upstream
+path, the version or commit it was copied at, and the only edit made (running over
+this project's minimal message shape instead of importing inspect_ai's ChatMessage).
+Copyright for that code remains with its authors.
+
+`data/agentdojo/` contains data derived from ethz-spylab/agentdojo, which is MIT
+licensed: normalised summaries of its released `runs/` transcripts and of the
+ground-truth arguments declared in its injection tasks. `data/agentdojo/MANIFEST.json`
+records the exact upstream commit. Copyright for the underlying benchmark and its
+released runs remains with its authors.

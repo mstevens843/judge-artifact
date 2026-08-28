@@ -1,0 +1,1443 @@
+{
+  "analysis": {
+    "all_pipelines": {
+      "arg_match": {
+        "adjacent_pairs_flipped": 7,
+        "inverted_pairs_total": 7,
+        "judge": "arg_match",
+        "judge_ranking": [
+          "claude-3-5-sonnet-20241022",
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "command-r-plus",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "claude-3-opus-20240229",
+          "claude-3-5-sonnet-20240620",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "claude-3-haiku-20240307",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "claude-3-sonnet-20240229",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "gpt-3.5-turbo-0125",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.9524,
+        "largest_moves": [
+          {
+            "judge_rank": 2,
+            "moved": -2,
+            "pipeline": "command-r-plus",
+            "sound_rank": 4
+          },
+          {
+            "judge_rank": 20,
+            "moved": 2,
+            "pipeline": "gpt-3.5-turbo-0125",
+            "sound_rank": 18
+          },
+          {
+            "judge_rank": 18,
+            "moved": -2,
+            "pipeline": "claude-3-sonnet-20240229",
+            "sound_rank": 20
+          },
+          {
+            "judge_rank": 1,
+            "moved": 1,
+            "pipeline": "gpt-4o-2024-05-13-transformers_pi_detector",
+            "sound_rank": 0
+          },
+          {
+            "judge_rank": 0,
+            "moved": -1,
+            "pipeline": "claude-3-5-sonnet-20241022",
+            "sound_rank": 1
+          }
+        ],
+        "positions_changed": 13,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 5.6,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 5.6
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "gpt-4-turbo-2024-04-09",
+            "safer_by_oracle": "gpt-4o-mini-2024-07-18",
+            "sound_gap_pp": 4.2
+          },
+          {
+            "judge_gap_pp": 2.1,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "meta-llama_Llama-3-70b-chat-hf",
+            "sound_gap_pp": 4.2
+          },
+          {
+            "judge_gap_pp": 3.5,
+            "safer_by_judge": "meta-llama_Llama-3-70b-chat-hf",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 1.4
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "command-r-plus",
+            "safer_by_oracle": "claude-3-7-sonnet-20250219",
+            "sound_gap_pp": 0.7
+          }
+        ]
+      },
+      "executed": {
+        "adjacent_pairs_flipped": 13,
+        "inverted_pairs_total": 57,
+        "judge": "executed",
+        "judge_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "gemini-1.5-flash-002",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-7-sonnet-20250219",
+          "claude-3-opus-20240229",
+          "command-r-plus",
+          "gemini-1.5-flash-001",
+          "gemini-2.0-flash-exp",
+          "claude-3-haiku-20240307",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "gemini-1.5-pro-001",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-2.0-flash-001",
+          "gemini-1.5-pro-002",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "command-r",
+          "Meta-SecAlign-70B",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-mini-2024-07-18",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "gpt-4o-2024-05-13",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.6825,
+        "largest_moves": [
+          {
+            "judge_rank": 19,
+            "moved": 12,
+            "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_rank": 7
+          },
+          {
+            "judge_rank": 18,
+            "moved": 10,
+            "pipeline": "Meta-SecAlign-70B",
+            "sound_rank": 8
+          },
+          {
+            "judge_rank": 17,
+            "moved": 8,
+            "pipeline": "command-r",
+            "sound_rank": 9
+          },
+          {
+            "judge_rank": 10,
+            "moved": -7,
+            "pipeline": "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+            "sound_rank": 17
+          },
+          {
+            "judge_rank": 8,
+            "moved": -6,
+            "pipeline": "gemini-2.0-flash-exp",
+            "sound_rank": 14
+          }
+        ],
+        "positions_changed": 24,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 4.9,
+            "safer_by_judge": "meta-llama_Llama-3.3-70B-Instruct",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 25.0
+          },
+          {
+            "judge_gap_pp": 6.9,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 22.2
+          },
+          {
+            "judge_gap_pp": 4.2,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B",
+            "sound_gap_pp": 21.5
+          },
+          {
+            "judge_gap_pp": 1.4,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "command-r",
+            "sound_gap_pp": 20.8
+          },
+          {
+            "judge_gap_pp": 2.8,
+            "safer_by_judge": "gpt-4o-2024-05-13-repeat_user_prompt",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 20.8
+          }
+        ]
+      },
+      "name_only": {
+        "adjacent_pairs_flipped": 13,
+        "inverted_pairs_total": 59,
+        "judge": "name_only",
+        "judge_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "gemini-1.5-flash-002",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-7-sonnet-20250219",
+          "command-r-plus",
+          "gemini-2.0-flash-exp",
+          "claude-3-haiku-20240307",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "claude-3-opus-20240229",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-1.5-flash-001",
+          "command-r",
+          "Meta-SecAlign-70B",
+          "claude-3-sonnet-20240229",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "gpt-4o-2024-05-13",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.6825,
+        "largest_moves": [
+          {
+            "judge_rank": 19,
+            "moved": 12,
+            "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_rank": 7
+          },
+          {
+            "judge_rank": 8,
+            "moved": -9,
+            "pipeline": "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+            "sound_rank": 17
+          },
+          {
+            "judge_rank": 16,
+            "moved": 8,
+            "pipeline": "Meta-SecAlign-70B",
+            "sound_rank": 8
+          },
+          {
+            "judge_rank": 6,
+            "moved": -8,
+            "pipeline": "gemini-2.0-flash-exp",
+            "sound_rank": 14
+          },
+          {
+            "judge_rank": 15,
+            "moved": 6,
+            "pipeline": "command-r",
+            "sound_rank": 9
+          }
+        ],
+        "positions_changed": 23,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 9.0,
+            "safer_by_judge": "meta-llama_Llama-3.3-70B-Instruct",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 25.0
+          },
+          {
+            "judge_gap_pp": 2.8,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 22.2
+          },
+          {
+            "judge_gap_pp": 5.6,
+            "safer_by_judge": "gpt-4o-2024-05-13-repeat_user_prompt",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 20.8
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "meta-llama_Llama-3-70b-chat-hf",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 18.1
+          },
+          {
+            "judge_gap_pp": 1.6,
+            "safer_by_judge": "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+            "safer_by_oracle": "claude-3-opus-20240229",
+            "sound_gap_pp": 17.2
+          }
+        ]
+      }
+    },
+    "complete_n_runs_each": 144,
+    "complete_pipelines_only": {
+      "arg_match": {
+        "adjacent_pairs_flipped": 7,
+        "inverted_pairs_total": 7,
+        "judge": "arg_match",
+        "judge_ranking": [
+          "claude-3-5-sonnet-20241022",
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "command-r-plus",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "claude-3-opus-20240229",
+          "claude-3-5-sonnet-20240620",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "claude-3-haiku-20240307",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "claude-3-sonnet-20240229",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "gpt-3.5-turbo-0125",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.9487,
+        "largest_moves": [
+          {
+            "judge_rank": 2,
+            "moved": -2,
+            "pipeline": "command-r-plus",
+            "sound_rank": 4
+          },
+          {
+            "judge_rank": 19,
+            "moved": 2,
+            "pipeline": "gpt-3.5-turbo-0125",
+            "sound_rank": 17
+          },
+          {
+            "judge_rank": 17,
+            "moved": -2,
+            "pipeline": "claude-3-sonnet-20240229",
+            "sound_rank": 19
+          },
+          {
+            "judge_rank": 1,
+            "moved": 1,
+            "pipeline": "gpt-4o-2024-05-13-transformers_pi_detector",
+            "sound_rank": 0
+          },
+          {
+            "judge_rank": 0,
+            "moved": -1,
+            "pipeline": "claude-3-5-sonnet-20241022",
+            "sound_rank": 1
+          }
+        ],
+        "positions_changed": 13,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 5.6,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 5.6
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "gpt-4-turbo-2024-04-09",
+            "safer_by_oracle": "gpt-4o-mini-2024-07-18",
+            "sound_gap_pp": 4.2
+          },
+          {
+            "judge_gap_pp": 2.1,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "meta-llama_Llama-3-70b-chat-hf",
+            "sound_gap_pp": 4.2
+          },
+          {
+            "judge_gap_pp": 3.5,
+            "safer_by_judge": "meta-llama_Llama-3-70b-chat-hf",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 1.4
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "command-r-plus",
+            "safer_by_oracle": "claude-3-7-sonnet-20250219",
+            "sound_gap_pp": 0.7
+          }
+        ]
+      },
+      "executed": {
+        "adjacent_pairs_flipped": 12,
+        "inverted_pairs_total": 50,
+        "judge": "executed",
+        "judge_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "gemini-1.5-flash-002",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-7-sonnet-20250219",
+          "claude-3-opus-20240229",
+          "command-r-plus",
+          "gemini-1.5-flash-001",
+          "gemini-2.0-flash-exp",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-pro-001",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-2.0-flash-001",
+          "gemini-1.5-pro-002",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "command-r",
+          "Meta-SecAlign-70B",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-mini-2024-07-18",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "gpt-4o-2024-05-13",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.698,
+        "largest_moves": [
+          {
+            "judge_rank": 18,
+            "moved": 11,
+            "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_rank": 7
+          },
+          {
+            "judge_rank": 17,
+            "moved": 9,
+            "pipeline": "Meta-SecAlign-70B",
+            "sound_rank": 8
+          },
+          {
+            "judge_rank": 16,
+            "moved": 7,
+            "pipeline": "command-r",
+            "sound_rank": 9
+          },
+          {
+            "judge_rank": 8,
+            "moved": -6,
+            "pipeline": "gemini-2.0-flash-exp",
+            "sound_rank": 14
+          },
+          {
+            "judge_rank": 23,
+            "moved": 6,
+            "pipeline": "gpt-3.5-turbo-0125",
+            "sound_rank": 17
+          }
+        ],
+        "positions_changed": 22,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 4.9,
+            "safer_by_judge": "meta-llama_Llama-3.3-70B-Instruct",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 25.0
+          },
+          {
+            "judge_gap_pp": 6.9,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 22.2
+          },
+          {
+            "judge_gap_pp": 4.2,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B",
+            "sound_gap_pp": 21.5
+          },
+          {
+            "judge_gap_pp": 1.4,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "command-r",
+            "sound_gap_pp": 20.8
+          },
+          {
+            "judge_gap_pp": 2.8,
+            "safer_by_judge": "gpt-4o-2024-05-13-repeat_user_prompt",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 20.8
+          }
+        ]
+      },
+      "name_only": {
+        "adjacent_pairs_flipped": 12,
+        "inverted_pairs_total": 50,
+        "judge": "name_only",
+        "judge_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "gemini-1.5-flash-002",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-7-sonnet-20250219",
+          "command-r-plus",
+          "gemini-2.0-flash-exp",
+          "claude-3-haiku-20240307",
+          "claude-3-opus-20240229",
+          "gpt-4o-2024-05-13-tool_filter",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-1.5-flash-001",
+          "command-r",
+          "Meta-SecAlign-70B",
+          "claude-3-sonnet-20240229",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "gpt-3.5-turbo-0125",
+          "gpt-4o-2024-05-13",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4-0125-preview"
+        ],
+        "kendall_tau": 0.7094,
+        "largest_moves": [
+          {
+            "judge_rank": 18,
+            "moved": 11,
+            "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_rank": 7
+          },
+          {
+            "judge_rank": 6,
+            "moved": -8,
+            "pipeline": "gemini-2.0-flash-exp",
+            "sound_rank": 14
+          },
+          {
+            "judge_rank": 15,
+            "moved": 7,
+            "pipeline": "Meta-SecAlign-70B",
+            "sound_rank": 8
+          },
+          {
+            "judge_rank": 23,
+            "moved": 6,
+            "pipeline": "gpt-3.5-turbo-0125",
+            "sound_rank": 17
+          },
+          {
+            "judge_rank": 14,
+            "moved": 5,
+            "pipeline": "command-r",
+            "sound_rank": 9
+          }
+        ],
+        "positions_changed": 24,
+        "ranking_inverts": true,
+        "sound_ranking": [
+          "gpt-4o-2024-05-13-transformers_pi_detector",
+          "claude-3-5-sonnet-20241022",
+          "claude-3-7-sonnet-20250219",
+          "gemini-1.5-flash-002",
+          "command-r-plus",
+          "claude-3-5-sonnet-20240620",
+          "claude-3-opus-20240229",
+          "Meta-SecAlign-70B-repeat_user_prompt",
+          "Meta-SecAlign-70B",
+          "command-r",
+          "gpt-4o-2024-05-13-tool_filter",
+          "claude-3-haiku-20240307",
+          "gemini-1.5-flash-001",
+          "gemini-1.5-pro-002",
+          "gemini-2.0-flash-exp",
+          "gemini-1.5-pro-001",
+          "gemini-2.0-flash-001",
+          "gpt-3.5-turbo-0125",
+          "meta-llama_Llama-3-70b-chat-hf",
+          "claude-3-sonnet-20240229",
+          "gpt-4o-mini-2024-07-18",
+          "gpt-4-turbo-2024-04-09",
+          "gpt-4o-2024-05-13-repeat_user_prompt",
+          "meta-llama_Llama-3.3-70B-Instruct",
+          "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+          "gpt-4o-2024-05-13",
+          "gpt-4-0125-preview"
+        ],
+        "worst_inverted_pairs": [
+          {
+            "judge_gap_pp": 9.0,
+            "safer_by_judge": "meta-llama_Llama-3.3-70B-Instruct",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 25.0
+          },
+          {
+            "judge_gap_pp": 2.8,
+            "safer_by_judge": "claude-3-sonnet-20240229",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 22.2
+          },
+          {
+            "judge_gap_pp": 5.6,
+            "safer_by_judge": "gpt-4o-2024-05-13-repeat_user_prompt",
+            "safer_by_oracle": "gpt-3.5-turbo-0125",
+            "sound_gap_pp": 20.8
+          },
+          {
+            "judge_gap_pp": 0.7,
+            "safer_by_judge": "meta-llama_Llama-3-70b-chat-hf",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 18.1
+          },
+          {
+            "judge_gap_pp": 11.8,
+            "safer_by_judge": "gemini-1.5-pro-001",
+            "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_gap_pp": 13.2
+          }
+        ]
+      }
+    },
+    "defense_families": {
+      "Meta-SecAlign-70B": {
+        "comparisons": {
+          "arg_match": {
+            "adjacent_pairs_flipped": 0,
+            "inverted_pairs_total": 0,
+            "judge": "arg_match",
+            "judge_ranking": [
+              "Meta-SecAlign-70B-repeat_user_prompt",
+              "Meta-SecAlign-70B"
+            ],
+            "kendall_tau": 1.0,
+            "largest_moves": [],
+            "positions_changed": 0,
+            "ranking_inverts": false,
+            "sound_ranking": [
+              "Meta-SecAlign-70B-repeat_user_prompt",
+              "Meta-SecAlign-70B"
+            ],
+            "worst_inverted_pairs": []
+          },
+          "executed": {
+            "adjacent_pairs_flipped": 1,
+            "inverted_pairs_total": 1,
+            "judge": "executed",
+            "judge_ranking": [
+              "Meta-SecAlign-70B",
+              "Meta-SecAlign-70B-repeat_user_prompt"
+            ],
+            "kendall_tau": -1.0,
+            "largest_moves": [
+              {
+                "judge_rank": 1,
+                "moved": 1,
+                "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+                "sound_rank": 0
+              },
+              {
+                "judge_rank": 0,
+                "moved": -1,
+                "pipeline": "Meta-SecAlign-70B",
+                "sound_rank": 1
+              }
+            ],
+            "positions_changed": 2,
+            "ranking_inverts": true,
+            "sound_ranking": [
+              "Meta-SecAlign-70B-repeat_user_prompt",
+              "Meta-SecAlign-70B"
+            ],
+            "worst_inverted_pairs": [
+              {
+                "judge_gap_pp": 2.8,
+                "safer_by_judge": "Meta-SecAlign-70B",
+                "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+                "sound_gap_pp": 0.7
+              }
+            ]
+          },
+          "name_only": {
+            "adjacent_pairs_flipped": 1,
+            "inverted_pairs_total": 1,
+            "judge": "name_only",
+            "judge_ranking": [
+              "Meta-SecAlign-70B",
+              "Meta-SecAlign-70B-repeat_user_prompt"
+            ],
+            "kendall_tau": -1.0,
+            "largest_moves": [
+              {
+                "judge_rank": 1,
+                "moved": 1,
+                "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+                "sound_rank": 0
+              },
+              {
+                "judge_rank": 0,
+                "moved": -1,
+                "pipeline": "Meta-SecAlign-70B",
+                "sound_rank": 1
+              }
+            ],
+            "positions_changed": 2,
+            "ranking_inverts": true,
+            "sound_ranking": [
+              "Meta-SecAlign-70B-repeat_user_prompt",
+              "Meta-SecAlign-70B"
+            ],
+            "worst_inverted_pairs": [
+              {
+                "judge_gap_pp": 2.8,
+                "safer_by_judge": "Meta-SecAlign-70B",
+                "safer_by_oracle": "Meta-SecAlign-70B-repeat_user_prompt",
+                "sound_gap_pp": 0.7
+              }
+            ]
+          }
+        },
+        "members": [
+          {
+            "arg_match_asr": 0.1111,
+            "defense": "repeat_user_prompt",
+            "executed_asr": 0.4375,
+            "n": 144,
+            "name_only_asr": 0.4375,
+            "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+            "sound_asr": 0.0903
+          },
+          {
+            "arg_match_asr": 0.125,
+            "defense": "none",
+            "executed_asr": 0.4097,
+            "n": 144,
+            "name_only_asr": 0.4097,
+            "pipeline": "Meta-SecAlign-70B",
+            "sound_asr": 0.0972
+          }
+        ]
+      },
+      "gpt-4o-2024-05-13": {
+        "comparisons": {
+          "arg_match": {
+            "adjacent_pairs_flipped": 0,
+            "inverted_pairs_total": 0,
+            "judge": "arg_match",
+            "judge_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+              "gpt-4o-2024-05-13"
+            ],
+            "kendall_tau": 1.0,
+            "largest_moves": [],
+            "positions_changed": 0,
+            "ranking_inverts": false,
+            "sound_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+              "gpt-4o-2024-05-13"
+            ],
+            "worst_inverted_pairs": []
+          },
+          "executed": {
+            "adjacent_pairs_flipped": 1,
+            "inverted_pairs_total": 1,
+            "judge": "executed",
+            "judge_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting"
+            ],
+            "kendall_tau": 0.8,
+            "largest_moves": [
+              {
+                "judge_rank": 4,
+                "moved": 1,
+                "pipeline": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+                "sound_rank": 3
+              },
+              {
+                "judge_rank": 3,
+                "moved": -1,
+                "pipeline": "gpt-4o-2024-05-13",
+                "sound_rank": 4
+              }
+            ],
+            "positions_changed": 2,
+            "ranking_inverts": true,
+            "sound_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+              "gpt-4o-2024-05-13"
+            ],
+            "worst_inverted_pairs": [
+              {
+                "judge_gap_pp": 0.7,
+                "safer_by_judge": "gpt-4o-2024-05-13",
+                "safer_by_oracle": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+                "sound_gap_pp": 0.7
+              }
+            ]
+          },
+          "name_only": {
+            "adjacent_pairs_flipped": 1,
+            "inverted_pairs_total": 1,
+            "judge": "name_only",
+            "judge_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting"
+            ],
+            "kendall_tau": 0.8,
+            "largest_moves": [
+              {
+                "judge_rank": 4,
+                "moved": 1,
+                "pipeline": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+                "sound_rank": 3
+              },
+              {
+                "judge_rank": 3,
+                "moved": -1,
+                "pipeline": "gpt-4o-2024-05-13",
+                "sound_rank": 4
+              }
+            ],
+            "positions_changed": 2,
+            "ranking_inverts": true,
+            "sound_ranking": [
+              "gpt-4o-2024-05-13-transformers_pi_detector",
+              "gpt-4o-2024-05-13-tool_filter",
+              "gpt-4o-2024-05-13-repeat_user_prompt",
+              "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+              "gpt-4o-2024-05-13"
+            ],
+            "worst_inverted_pairs": [
+              {
+                "judge_gap_pp": 1.4,
+                "safer_by_judge": "gpt-4o-2024-05-13",
+                "safer_by_oracle": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+                "sound_gap_pp": 0.7
+              }
+            ]
+          }
+        },
+        "members": [
+          {
+            "arg_match_asr": 0.0208,
+            "defense": "transformers_pi_detector",
+            "executed_asr": 0.0417,
+            "n": 144,
+            "name_only_asr": 0.0417,
+            "pipeline": "gpt-4o-2024-05-13-transformers_pi_detector",
+            "sound_asr": 0.0069
+          },
+          {
+            "arg_match_asr": 0.1597,
+            "defense": "tool_filter",
+            "executed_asr": 0.2986,
+            "n": 144,
+            "name_only_asr": 0.3125,
+            "pipeline": "gpt-4o-2024-05-13-tool_filter",
+            "sound_asr": 0.1111
+          },
+          {
+            "arg_match_asr": 0.4861,
+            "defense": "repeat_user_prompt",
+            "executed_asr": 0.6319,
+            "n": 144,
+            "name_only_asr": 0.6458,
+            "pipeline": "gpt-4o-2024-05-13-repeat_user_prompt",
+            "sound_asr": 0.4653
+          },
+          {
+            "arg_match_asr": 0.6389,
+            "defense": "spotlighting_with_delimiting",
+            "executed_asr": 0.7222,
+            "n": 144,
+            "name_only_asr": 0.7361,
+            "pipeline": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+            "sound_asr": 0.6181
+          },
+          {
+            "arg_match_asr": 0.6458,
+            "defense": "none",
+            "executed_asr": 0.7153,
+            "n": 144,
+            "name_only_asr": 0.7222,
+            "pipeline": "gpt-4o-2024-05-13",
+            "sound_asr": 0.625
+          }
+        ]
+      },
+      "meta-llama_Llama-3.3-70B-Instruct": {
+        "comparisons": {
+          "arg_match": {
+            "adjacent_pairs_flipped": 0,
+            "inverted_pairs_total": 0,
+            "judge": "arg_match",
+            "judge_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "kendall_tau": 1.0,
+            "largest_moves": [],
+            "positions_changed": 0,
+            "ranking_inverts": false,
+            "sound_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "worst_inverted_pairs": []
+          },
+          "executed": {
+            "adjacent_pairs_flipped": 0,
+            "inverted_pairs_total": 0,
+            "judge": "executed",
+            "judge_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "kendall_tau": 1.0,
+            "largest_moves": [],
+            "positions_changed": 0,
+            "ranking_inverts": false,
+            "sound_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "worst_inverted_pairs": []
+          },
+          "name_only": {
+            "adjacent_pairs_flipped": 0,
+            "inverted_pairs_total": 0,
+            "judge": "name_only",
+            "judge_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "kendall_tau": 1.0,
+            "largest_moves": [],
+            "positions_changed": 0,
+            "ranking_inverts": false,
+            "sound_ranking": [
+              "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+              "meta-llama_Llama-3.3-70B-Instruct"
+            ],
+            "worst_inverted_pairs": []
+          }
+        },
+        "members": [
+          {
+            "arg_match_asr": 0.2653,
+            "defense": "repeat_user_prompt",
+            "executed_asr": 0.2653,
+            "n": 98,
+            "name_only_asr": 0.2755,
+            "pipeline": "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+            "sound_asr": 0.2551
+          },
+          {
+            "arg_match_asr": 0.5625,
+            "defense": "none",
+            "executed_asr": 0.6111,
+            "n": 144,
+            "name_only_asr": 0.6111,
+            "pipeline": "meta-llama_Llama-3.3-70B-Instruct",
+            "sound_asr": 0.5069
+          }
+        ]
+      }
+    },
+    "n_pipelines": 28,
+    "n_pipelines_complete": 27,
+    "pipelines": [
+      {
+        "arg_match_asr": 0.0208,
+        "base": "gpt-4o-2024-05-13",
+        "defense": "transformers_pi_detector",
+        "executed_asr": 0.0417,
+        "n": 144,
+        "name_only_asr": 0.0417,
+        "pipeline": "gpt-4o-2024-05-13-transformers_pi_detector",
+        "sound_asr": 0.0069
+      },
+      {
+        "arg_match_asr": 0.0208,
+        "base": "claude-3-5-sonnet-20241022",
+        "defense": "none",
+        "executed_asr": 0.1667,
+        "n": 144,
+        "name_only_asr": 0.1667,
+        "pipeline": "claude-3-5-sonnet-20241022",
+        "sound_asr": 0.0208
+      },
+      {
+        "arg_match_asr": 0.0417,
+        "base": "claude-3-7-sonnet-20250219",
+        "defense": "none",
+        "executed_asr": 0.2014,
+        "n": 144,
+        "name_only_asr": 0.2014,
+        "pipeline": "claude-3-7-sonnet-20250219",
+        "sound_asr": 0.0417
+      },
+      {
+        "arg_match_asr": 0.0556,
+        "base": "gemini-1.5-flash-002",
+        "defense": "none",
+        "executed_asr": 0.0625,
+        "n": 144,
+        "name_only_asr": 0.0625,
+        "pipeline": "gemini-1.5-flash-002",
+        "sound_asr": 0.0417
+      },
+      {
+        "arg_match_asr": 0.0347,
+        "base": "command-r-plus",
+        "defense": "none",
+        "executed_asr": 0.2222,
+        "n": 144,
+        "name_only_asr": 0.2431,
+        "pipeline": "command-r-plus",
+        "sound_asr": 0.0486
+      },
+      {
+        "arg_match_asr": 0.0972,
+        "base": "claude-3-5-sonnet-20240620",
+        "defense": "none",
+        "executed_asr": 0.1736,
+        "n": 144,
+        "name_only_asr": 0.1736,
+        "pipeline": "claude-3-5-sonnet-20240620",
+        "sound_asr": 0.0833
+      },
+      {
+        "arg_match_asr": 0.0833,
+        "base": "claude-3-opus-20240229",
+        "defense": "none",
+        "executed_asr": 0.2222,
+        "n": 144,
+        "name_only_asr": 0.2917,
+        "pipeline": "claude-3-opus-20240229",
+        "sound_asr": 0.0833
+      },
+      {
+        "arg_match_asr": 0.1111,
+        "base": "Meta-SecAlign-70B",
+        "defense": "repeat_user_prompt",
+        "executed_asr": 0.4375,
+        "n": 144,
+        "name_only_asr": 0.4375,
+        "pipeline": "Meta-SecAlign-70B-repeat_user_prompt",
+        "sound_asr": 0.0903
+      },
+      {
+        "arg_match_asr": 0.125,
+        "base": "Meta-SecAlign-70B",
+        "defense": "none",
+        "executed_asr": 0.4097,
+        "n": 144,
+        "name_only_asr": 0.4097,
+        "pipeline": "Meta-SecAlign-70B",
+        "sound_asr": 0.0972
+      },
+      {
+        "arg_match_asr": 0.1319,
+        "base": "command-r",
+        "defense": "none",
+        "executed_asr": 0.3819,
+        "n": 144,
+        "name_only_asr": 0.3889,
+        "pipeline": "command-r",
+        "sound_asr": 0.1042
+      },
+      {
+        "arg_match_asr": 0.1597,
+        "base": "gpt-4o-2024-05-13",
+        "defense": "tool_filter",
+        "executed_asr": 0.2986,
+        "n": 144,
+        "name_only_asr": 0.3125,
+        "pipeline": "gpt-4o-2024-05-13-tool_filter",
+        "sound_asr": 0.1111
+      },
+      {
+        "arg_match_asr": 0.1528,
+        "base": "claude-3-haiku-20240307",
+        "defense": "none",
+        "executed_asr": 0.2569,
+        "n": 144,
+        "name_only_asr": 0.2708,
+        "pipeline": "claude-3-haiku-20240307",
+        "sound_asr": 0.1181
+      },
+      {
+        "arg_match_asr": 0.1806,
+        "base": "gemini-1.5-flash-001",
+        "defense": "none",
+        "executed_asr": 0.2361,
+        "n": 144,
+        "name_only_asr": 0.3542,
+        "pipeline": "gemini-1.5-flash-001",
+        "sound_asr": 0.1528
+      },
+      {
+        "arg_match_asr": 0.1806,
+        "base": "gemini-1.5-pro-002",
+        "defense": "none",
+        "executed_asr": 0.3264,
+        "n": 144,
+        "name_only_asr": 0.3333,
+        "pipeline": "gemini-1.5-pro-002",
+        "sound_asr": 0.1736
+      },
+      {
+        "arg_match_asr": 0.1875,
+        "base": "gemini-2.0-flash-exp",
+        "defense": "none",
+        "executed_asr": 0.2361,
+        "n": 144,
+        "name_only_asr": 0.25,
+        "pipeline": "gemini-2.0-flash-exp",
+        "sound_asr": 0.1806
+      },
+      {
+        "arg_match_asr": 0.2222,
+        "base": "gemini-1.5-pro-001",
+        "defense": "none",
+        "executed_asr": 0.2917,
+        "n": 144,
+        "name_only_asr": 0.3194,
+        "pipeline": "gemini-1.5-pro-001",
+        "sound_asr": 0.2222
+      },
+      {
+        "arg_match_asr": 0.2361,
+        "base": "gemini-2.0-flash-001",
+        "defense": "none",
+        "executed_asr": 0.3194,
+        "n": 144,
+        "name_only_asr": 0.3194,
+        "pipeline": "gemini-2.0-flash-001",
+        "sound_asr": 0.2222
+      },
+      {
+        "arg_match_asr": 0.2653,
+        "base": "meta-llama_Llama-3.3-70B-Instruct",
+        "defense": "repeat_user_prompt",
+        "executed_asr": 0.2653,
+        "n": 98,
+        "name_only_asr": 0.2755,
+        "pipeline": "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt",
+        "sound_asr": 0.2551
+      },
+      {
+        "arg_match_asr": 0.3889,
+        "base": "gpt-3.5-turbo-0125",
+        "defense": "none",
+        "executed_asr": 0.6597,
+        "n": 144,
+        "name_only_asr": 0.7014,
+        "pipeline": "gpt-3.5-turbo-0125",
+        "sound_asr": 0.2569
+      },
+      {
+        "arg_match_asr": 0.3542,
+        "base": "meta-llama_Llama-3-70b-chat-hf",
+        "defense": "none",
+        "executed_asr": 0.3611,
+        "n": 144,
+        "name_only_asr": 0.4306,
+        "pipeline": "meta-llama_Llama-3-70b-chat-hf",
+        "sound_asr": 0.2708
+      },
+      {
+        "arg_match_asr": 0.3333,
+        "base": "claude-3-sonnet-20240229",
+        "defense": "none",
+        "executed_asr": 0.3681,
+        "n": 144,
+        "name_only_asr": 0.4097,
+        "pipeline": "claude-3-sonnet-20240229",
+        "sound_asr": 0.3125
+      },
+      {
+        "arg_match_asr": 0.4167,
+        "base": "gpt-4o-mini-2024-07-18",
+        "defense": "none",
+        "executed_asr": 0.5417,
+        "n": 144,
+        "name_only_asr": 0.5625,
+        "pipeline": "gpt-4o-mini-2024-07-18",
+        "sound_asr": 0.3403
+      },
+      {
+        "arg_match_asr": 0.4097,
+        "base": "gpt-4-turbo-2024-04-09",
+        "defense": "none",
+        "executed_asr": 0.5417,
+        "n": 144,
+        "name_only_asr": 0.5833,
+        "pipeline": "gpt-4-turbo-2024-04-09",
+        "sound_asr": 0.3819
+      },
+      {
+        "arg_match_asr": 0.4861,
+        "base": "gpt-4o-2024-05-13",
+        "defense": "repeat_user_prompt",
+        "executed_asr": 0.6319,
+        "n": 144,
+        "name_only_asr": 0.6458,
+        "pipeline": "gpt-4o-2024-05-13-repeat_user_prompt",
+        "sound_asr": 0.4653
+      },
+      {
+        "arg_match_asr": 0.5625,
+        "base": "meta-llama_Llama-3.3-70B-Instruct",
+        "defense": "none",
+        "executed_asr": 0.6111,
+        "n": 144,
+        "name_only_asr": 0.6111,
+        "pipeline": "meta-llama_Llama-3.3-70B-Instruct",
+        "sound_asr": 0.5069
+      },
+      {
+        "arg_match_asr": 0.6389,
+        "base": "gpt-4o-2024-05-13",
+        "defense": "spotlighting_with_delimiting",
+        "executed_asr": 0.7222,
+        "n": 144,
+        "name_only_asr": 0.7361,
+        "pipeline": "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+        "sound_asr": 0.6181
+      },
+      {
+        "arg_match_asr": 0.6458,
+        "base": "gpt-4o-2024-05-13",
+        "defense": "none",
+        "executed_asr": 0.7153,
+        "n": 144,
+        "name_only_asr": 0.7222,
+        "pipeline": "gpt-4o-2024-05-13",
+        "sound_asr": 0.625
+      },
+      {
+        "arg_match_asr": 0.7222,
+        "base": "gpt-4-0125-preview",
+        "defense": "none",
+        "executed_asr": 0.7847,
+        "n": 144,
+        "name_only_asr": 0.8264,
+        "pipeline": "gpt-4-0125-preview",
+        "sound_asr": 0.6458
+      }
+    ]
+  },
+  "arm": "B-defense-axis",
+  "receipt": "ja1_b9f039de1d55700020b30e08d899180282ea136654669dcd796d940a616cd7ee",
+  "source": "AgentDojo banking/important_instructions, all released pipelines"
+}

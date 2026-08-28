@@ -1,0 +1,129 @@
+{
+  "defenses": [
+    "tool_filter",
+    "transformers_pi_detector",
+    "spotlighting_with_delimiting",
+    "repeat_user_prompt"
+  ],
+  "defenses_source": "src/agentdojo/agent_pipeline/agent_pipeline.py DEFENSES",
+  "pipelines": {
+    "Meta-SecAlign-70B": {
+      "base": "Meta-SecAlign-70B",
+      "defense": "none"
+    },
+    "Meta-SecAlign-70B-repeat_user_prompt": {
+      "base": "Meta-SecAlign-70B",
+      "defense": "repeat_user_prompt"
+    },
+    "claude-3-5-sonnet-20240620": {
+      "base": "claude-3-5-sonnet-20240620",
+      "defense": "none"
+    },
+    "claude-3-5-sonnet-20241022": {
+      "base": "claude-3-5-sonnet-20241022",
+      "defense": "none"
+    },
+    "claude-3-7-sonnet-20250219": {
+      "base": "claude-3-7-sonnet-20250219",
+      "defense": "none"
+    },
+    "claude-3-haiku-20240307": {
+      "base": "claude-3-haiku-20240307",
+      "defense": "none"
+    },
+    "claude-3-opus-20240229": {
+      "base": "claude-3-opus-20240229",
+      "defense": "none"
+    },
+    "claude-3-sonnet-20240229": {
+      "base": "claude-3-sonnet-20240229",
+      "defense": "none"
+    },
+    "command-r": {
+      "base": "command-r",
+      "defense": "none"
+    },
+    "command-r-plus": {
+      "base": "command-r-plus",
+      "defense": "none"
+    },
+    "gemini-1.5-flash-001": {
+      "base": "gemini-1.5-flash-001",
+      "defense": "none"
+    },
+    "gemini-1.5-flash-002": {
+      "base": "gemini-1.5-flash-002",
+      "defense": "none"
+    },
+    "gemini-1.5-pro-001": {
+      "base": "gemini-1.5-pro-001",
+      "defense": "none"
+    },
+    "gemini-1.5-pro-002": {
+      "base": "gemini-1.5-pro-002",
+      "defense": "none"
+    },
+    "gemini-2.0-flash-001": {
+      "base": "gemini-2.0-flash-001",
+      "defense": "none"
+    },
+    "gemini-2.0-flash-exp": {
+      "base": "gemini-2.0-flash-exp",
+      "defense": "none"
+    },
+    "gpt-3.5-turbo-0125": {
+      "base": "gpt-3.5-turbo-0125",
+      "defense": "none"
+    },
+    "gpt-4-0125-preview": {
+      "base": "gpt-4-0125-preview",
+      "defense": "none"
+    },
+    "gpt-4-turbo-2024-04-09": {
+      "base": "gpt-4-turbo-2024-04-09",
+      "defense": "none"
+    },
+    "gpt-4o-2024-05-13": {
+      "base": "gpt-4o-2024-05-13",
+      "defense": "none"
+    },
+    "gpt-4o-2024-05-13-repeat_user_prompt": {
+      "base": "gpt-4o-2024-05-13",
+      "defense": "repeat_user_prompt"
+    },
+    "gpt-4o-2024-05-13-spotlighting_with_delimiting": {
+      "base": "gpt-4o-2024-05-13",
+      "defense": "spotlighting_with_delimiting"
+    },
+    "gpt-4o-2024-05-13-tool_filter": {
+      "base": "gpt-4o-2024-05-13",
+      "defense": "tool_filter"
+    },
+    "gpt-4o-2024-05-13-transformers_pi_detector": {
+      "base": "gpt-4o-2024-05-13",
+      "defense": "transformers_pi_detector"
+    },
+    "gpt-4o-mini-2024-07-18": {
+      "base": "gpt-4o-mini-2024-07-18",
+      "defense": "none"
+    },
+    "meta-llama_Llama-3-70b-chat-hf": {
+      "base": "meta-llama_Llama-3-70b-chat-hf",
+      "defense": "none"
+    },
+    "meta-llama_Llama-3.3-70B-Instruct": {
+      "base": "meta-llama_Llama-3.3-70B-Instruct",
+      "defense": "none"
+    },
+    "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt": {
+      "base": "meta-llama_Llama-3.3-70B-Instruct",
+      "defense": "repeat_user_prompt"
+    }
+  },
+  "provenance": {
+    "license": "MIT",
+    "note": "AgentDojo releases completed transcripts with a deterministic `security` oracle.",
+    "ref": "089ed468cf3ed0322acc66b0211f26d9d90dbf60",
+    "repo": "ethz-spylab/agentdojo"
+  }
+}

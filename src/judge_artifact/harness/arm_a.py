@@ -18,7 +18,7 @@ from ..canonical import receipt
 from ..corpus.episodes import CORPUS
 from ..graders.registry import grade
 from ..model.defects import DEFECTS
-from ..model.graders import GRADERS
+from ..model.graders import GRADERS, GRADERS_BY_ID
 from ..model.layers import Verdict
 from ..model.predict import PREDICTED
 
@@ -45,10 +45,11 @@ def analyze(obs: dict[str, dict[str, Verdict]]) -> dict[str, object]:
             if pv is not ov:
                 disagreements.append({"defect": d.id, "grader": g.id,
                                       "predicted": pv.value, "observed": ov.value})
-    # both-direction confusion for each shipped defective grader
+    # both-direction confusion for every grader that is not the state oracle - the shipped
+    # defects AND the repairs, because a repair that is still two-sided is the finding
     confusion = {}
     for g in GRADERS:
-        if not g.is_shipped_defect:
+        if g.is_ground_truth:
             continue
         over, under = [], []
         for d in DEFECTS:
@@ -68,7 +69,7 @@ def analyze(obs: dict[str, dict[str, Verdict]]) -> dict[str, object]:
 
 def render(obs: dict[str, dict[str, Verdict]], an: dict[str, object]) -> str:
     lines = ["Arm A - constructed corpus, predicted(P) vs observed(O)",
-             f"{'defect':26}" + "".join(f"{g.id.replace('g_',''):>12}" for g in GRADERS),
+             f"{'defect':26}" + "".join(f"{g.id.removeprefix("g_"):>12}" for g in GRADERS),
              "-" * (26 + 12 * len(GRADERS))]
     for d in DEFECTS:
         row = f"{d.id} {d.slug:21}"[:26]
@@ -82,7 +83,9 @@ def render(obs: dict[str, dict[str, Verdict]], an: dict[str, object]) -> str:
     confusion = an["confusion"]
     assert isinstance(confusion, dict)
     for gid, c in confusion.items():
-        lines.append(f"{gid}: over-credit={c['over_credit']} under-credit={c['under_credit']}")
+        tag = "SHIPPED" if GRADERS_BY_ID[gid].is_shipped_defect else "repair "
+        lines.append(f"[{tag}] {gid:22} over-credit={c['over_credit']!s:26} "
+                     f"under-credit={c['under_credit']}")
     lines.append(f"floor (no deterministic grader recovers the truth): {an['floor']}")
     dis = an["disagreements"]
     lines.append(f"predicted-vs-observed disagreements: {dis}")

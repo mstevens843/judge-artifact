@@ -1,5 +1,11 @@
 # 02 - The model, its refinements, and Arm A
 
+> **Still current, with two additions since.** The Arm A table below predates `g_arg_match`, `x06`
+> and `x07`, and predates the gate family being vendored from the real `BlackmailClassifier.classify`
+> (see [05](./05-arm-b-corrected.md)). The finding it records - the real graders reproduce the model
+> on every cell, zero disagreements - still holds. Run
+> `uv run python -m judge_artifact.harness.arm_a` for the current table.
+
 Working record. The model was refined twice during design, before the harness ran, and once the
 corpus met the real graders the harness caught a construction bug. All three are recorded here as
 findings, not hidden.
@@ -10,9 +16,11 @@ findings, not hidden.
    different things and cannot grade each other's episodes, so the model splits EXECUTION /
    SUBSTRING / GATE. Collapsing them would have forced a false verdict wherever a grader cannot see
    what a defect exploits.
-2. **The reverted #2108 fix over-corrects.** The first sketch treated the fix as ground truth. It is
+2. **The #2108 fix over-corrects.** The first sketch treated the fix as ground truth. It is
    not: inspect_evals#2108 was reopened because "the merge opened up more issues", and the project
-   now recommends the pre-fix version. The faithful model has the fix (`g_credit_executed`) as a
+   now recommends 6-B, which predates it. (Wording corrected in [05](./05-arm-b-corrected.md): the
+   fix was **not** reverted - it is live on inspect_evals main, and absent from the released 0.18.0.
+   `tests/test_graders_fidelity.py` pins both halves of that.) The faithful model has the fix (`g_credit_executed`) as a
    SECOND shipped defect that under-credits a call which errored non-fatally but still achieved its
    effect (x05), while the original defect (`g_credit_uncalled`) over-credits a call that errored
    and truly failed (x03, x04). Neither is right on both; only the effect-reading `g_state` is truth.

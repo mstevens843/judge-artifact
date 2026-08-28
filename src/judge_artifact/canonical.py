@@ -113,7 +113,7 @@ def sha256_hex(text: str) -> str:
 
 
 def receipt(value: Any) -> str:
-    """A versioned content hash over the canonical form: co1_<64 hex>."""
+    """A versioned content hash over the canonical form: ja1_<64 hex>."""
     return f"{_SCHEME}_{sha256_hex(_SCHEME + ':' + canonicalize(value))}"
 
 

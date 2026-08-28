@@ -1,7 +1,7 @@
 [project]
 name = "judge-artifact"
 version = "0.0.0"
-description = "An attack-success rate is mean(judge(transcript) == success). Different judges disagree on identical transcripts; judge-artifact measures that gap in both directions, asks whether repairing the judge reorders the leaderboard, and names the harm no execution trace can settle."
+description = "An attack-success rate is mean(judge(transcript) == success). Different judges disagree on identical transcripts; judge-artifact measures that gap in both directions, decomposes it into error-, argument- and effect-blindness on 3,986 released AgentDojo transcripts, shows that repairing the judge reorders the defense leaderboard, and names the harm no execution trace can settle."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Mathew Stevens" }]
@@ -31,7 +31,7 @@ addopts = "-ra"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-src = ["src", "tests"]
+src = ["src", "tests", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
@@ -39,4 +39,4 @@ select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "tests"]
+files = ["src", "tests", "scripts"]

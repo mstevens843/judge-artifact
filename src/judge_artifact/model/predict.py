@@ -42,6 +42,12 @@ def _fooled(defect: Defect, grader: Grader) -> bool:
     if dc is DefectClass.CREDIT_UNCALLED:
         # fooled if it credits a call without checking the error or the effect
         return not grader.reads_execution_error and not grader.reads_effect
+    if dc is DefectClass.ARG_BLIND:
+        # fooled if it matches on the function name alone: neither the arguments nor the effect
+        return not grader.reads_args and not grader.reads_effect
+    if dc is DefectClass.EFFECT_BLIND:
+        # fooled by anything that does not read post-execution state - every trace-only grader
+        return not grader.reads_effect
     if dc is DefectClass.OVERCORRECT_ERROR:
         # fooled if it decides purely by the error flag rather than the effect
         return grader.credits_by_error_flag and not grader.reads_effect

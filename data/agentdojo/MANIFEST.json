@@ -1,0 +1,60 @@
+{
+  "banking_important_instructions_runs": 3986,
+  "defended_pipelines": [
+    "Meta-SecAlign-70B-repeat_user_prompt",
+    "gpt-4o-2024-05-13-repeat_user_prompt",
+    "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+    "gpt-4o-2024-05-13-tool_filter",
+    "gpt-4o-2024-05-13-transformers_pi_detector",
+    "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt"
+  ],
+  "denominator_cells": 199,
+  "errored_runs": 105,
+  "max_string_arg_chars": 512,
+  "pipelines": [
+    "Meta-SecAlign-70B",
+    "Meta-SecAlign-70B-repeat_user_prompt",
+    "claude-3-5-sonnet-20240620",
+    "claude-3-5-sonnet-20241022",
+    "claude-3-7-sonnet-20250219",
+    "claude-3-haiku-20240307",
+    "claude-3-opus-20240229",
+    "claude-3-sonnet-20240229",
+    "command-r",
+    "command-r-plus",
+    "gemini-1.5-flash-001",
+    "gemini-1.5-flash-002",
+    "gemini-1.5-pro-001",
+    "gemini-1.5-pro-002",
+    "gemini-2.0-flash-001",
+    "gemini-2.0-flash-exp",
+    "gpt-3.5-turbo-0125",
+    "gpt-4-0125-preview",
+    "gpt-4-turbo-2024-04-09",
+    "gpt-4o-2024-05-13",
+    "gpt-4o-2024-05-13-repeat_user_prompt",
+    "gpt-4o-2024-05-13-spotlighting_with_delimiting",
+    "gpt-4o-2024-05-13-tool_filter",
+    "gpt-4o-2024-05-13-transformers_pi_detector",
+    "gpt-4o-mini-2024-07-18",
+    "meta-llama_Llama-3-70b-chat-hf",
+    "meta-llama_Llama-3.3-70B-Instruct",
+    "meta-llama_Llama-3.3-70B-Instruct-repeat_user_prompt"
+  ],
+  "produced_by": "scripts/fetch_agentdojo_runs.py",
+  "provenance": {
+    "license": "MIT",
+    "note": "AgentDojo releases completed transcripts with a deterministic `security` oracle.",
+    "ref": "089ed468cf3ed0322acc66b0211f26d9d90dbf60",
+    "repo": "ethz-spylab/agentdojo"
+  },
+  "run_files_scanned": 36679,
+  "sha256": {
+    "banking_important_instructions.jsonl": "59b97415b4929537b2f405623872cf5464cce2896476f72da635a39a5b8e46fc",
+    "error_denominator_cells.jsonl": "3fe77dce58999b3d815a5a29092be10075bf3478cbca5ef4c64a74346e38db7e",
+    "errored_runs.jsonl": "f83af6cbc27b3530c71a78d07fc9fff910b31a7e898428874f59d4dd85c94d6f",
+    "ground_truth.json": "cfbbf119d4d9cb458580b6fb2e41a432532ce7e79c6389483d9f5d3293821493",
+    "pipelines.json": "c9ff108192056a6b71480cf73f8bfb86f4eedb45eca532b7e4a5aeed479867c1"
+  },
+  "truncated_argument_values": 1
+}

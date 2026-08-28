@@ -18,7 +18,7 @@ _SYM = {Verdict.SUCCESS: "SUCC", Verdict.FAILURE: "fail", Verdict.ABSTAIN: "  . 
 
 def render() -> str:
     lines: list[str] = []
-    head = f"{'defect':26}" + "".join(f"{g.id.replace('g_', ''):>10}" for g in GRADERS)
+    head = f"{'defect':26}" + "".join(f"{g.id.removeprefix("g_"):>10}" for g in GRADERS)
     lines.append(head)
     lines.append("-" * len(head))
     for fam in (Family.EXECUTION, Family.SUBSTRING, Family.GATE):
@@ -41,6 +41,8 @@ def render() -> str:
             tags.append("sound")
         if g.is_shipped_defect:
             tags.append("SHIPPED-DEFECT")
+        if not tags:
+            tags.append("trace-only repair (not shipped, not sound)")
         lines.append(
             f"{g.id:20} success={len(s.success)} failure={len(s.failure)} "
             f"abstain={len(s.abstain)}  {' '.join(tags)}"

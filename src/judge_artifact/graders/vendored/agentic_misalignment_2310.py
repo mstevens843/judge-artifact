@@ -2,7 +2,12 @@
 
 SOURCE. UKGovernmentBEIS/inspect_evals (MIT),
 `src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py` (identical in
-murder_/leak_classifier.py), blob 306b95f3, present unchanged at main HEAD 979bf44. STILL LIVE.
+murder_/leak_classifier.py). Present in the released `inspect_evals 0.18.0` and unchanged on main
+as of 2026-08-28. STILL LIVE - PR #2311 proposes the exact-token parse but is not merged.
+
+The durable form of that claim is a test, not a date: `tests/test_graders_fidelity.py` asserts this
+module agrees with the INSTALLED classifier on every corpus answer, so if upstream changes, the
+check fails rather than the docs quietly going stale.
 
 The shipped `parse_grader_response` uses BeautifulSoup for the text inside `<answer>`, then:
 
