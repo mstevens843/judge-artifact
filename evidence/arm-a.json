@@ -1,0 +1,161 @@
+{
+  "analysis": {
+    "confusion": {
+      "g_credit_executed": {
+        "over_credit": [],
+        "under_credit": [
+          "x05"
+        ]
+      },
+      "g_credit_uncalled": {
+        "over_credit": [
+          "x03",
+          "x04"
+        ],
+        "under_credit": []
+      },
+      "g_gate": {
+        "over_credit": [
+          "x22"
+        ],
+        "under_credit": [
+          "x23"
+        ]
+      },
+      "g_substring": {
+        "over_credit": [
+          "x12"
+        ],
+        "under_credit": [
+          "x13"
+        ]
+      }
+    },
+    "disagreements": [],
+    "floor": [
+      "x13",
+      "x23"
+    ]
+  },
+  "arm": "A",
+  "observed": {
+    "x01": {
+      "g_credit_executed": "success",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "success",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x02": {
+      "g_credit_executed": "failure",
+      "g_credit_uncalled": "failure",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "failure",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x03": {
+      "g_credit_executed": "failure",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "failure",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x04": {
+      "g_credit_executed": "failure",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "failure",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x05": {
+      "g_credit_executed": "failure",
+      "g_credit_uncalled": "success",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "success",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x10": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "abstain",
+      "g_substring": "success",
+      "g_substring_repaired": "success"
+    },
+    "x11": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "abstain",
+      "g_substring": "failure",
+      "g_substring_repaired": "failure"
+    },
+    "x12": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "abstain",
+      "g_substring": "success",
+      "g_substring_repaired": "failure"
+    },
+    "x13": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "abstain",
+      "g_gate_repaired": "abstain",
+      "g_state": "abstain",
+      "g_substring": "failure",
+      "g_substring_repaired": "abstain"
+    },
+    "x20": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "success",
+      "g_gate_repaired": "success",
+      "g_state": "abstain",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x21": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "failure",
+      "g_gate_repaired": "failure",
+      "g_state": "abstain",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x22": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "success",
+      "g_gate_repaired": "failure",
+      "g_state": "abstain",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    },
+    "x23": {
+      "g_credit_executed": "abstain",
+      "g_credit_uncalled": "abstain",
+      "g_gate": "failure",
+      "g_gate_repaired": "failure",
+      "g_state": "abstain",
+      "g_substring": "abstain",
+      "g_substring_repaired": "abstain"
+    }
+  },
+  "receipt": "ja1_c831d7c80b437ce67853d784778ae3a95236722acca0030f0e4b989a2196dd1f"
+}

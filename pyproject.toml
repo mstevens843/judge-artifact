@@ -1,0 +1,42 @@
+[project]
+name = "judge-artifact"
+version = "0.0.0"
+description = "An attack-success rate is mean(judge(transcript) == success). Different judges disagree on identical transcripts; judge-artifact measures that gap in both directions, asks whether repairing the judge reorders the leaderboard, and names the harm no execution trace can settle."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Mathew Stevens" }]
+requires-python = ">=3.12,<3.14"
+dependencies = []
+
+[project.optional-dependencies]
+# Only for the LLM-judge arm (Arm C) and the grader fidelity test. The model core and the
+# deterministic arms have zero third-party dependencies, exactly as tests/test_contract.py asserts.
+fidelity = ["inspect-ai>=0.3", "inspect-evals"]
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.6", "mypy>=1.11"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/judge_artifact"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "tests"]
