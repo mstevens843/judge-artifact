@@ -1,20 +1,10 @@
-"""Grader fidelity: the vendored copies reproduce the SHIPPED verdicts, or this project is fiction.
+"""Latest PyPI grader fidelity.
 
-Every headline in this repo is stated as "the real grader said X". That is a claim a reviewer must
-be able to check, so when the optional `fidelity` extra is installed these tests run the vendored
-functions and the installed `inspect_evals` functions over the same corpus and require the same
-answer, for all three vendored modules:
-
-  #2108  `is_function_called` / `times_function_called` / `get_args_of_function_call`, over real
-         `inspect_ai` ChatMessage objects built from each execution episode.
-  #2310  `parse_grader_response`, over each substring episode's answer string.
-  #2292  `BlackmailClassifier.classify`, over each gate episode's response and judge verdict.
-
-It also pins the VERSION claim the docs make: the released package must NOT contain the #2108 fix.
-If a future release ships it, this test fails and the wording has to change - which is the point.
-
-These skip (never silently pass) when inspect-evals is absent, so a green run cannot mean the
-fidelity was never checked. Install with `uv sync --extra fidelity`.
+This is intentionally separate from ``test_graders_fidelity.py``. The locked path proves the
+historical release claim against ``inspect-evals 0.18.0`` / ``inspect-ai 0.3.260``. This file checks
+the current latest packages named in the docs and asserts the compatibility shape observed there:
+the AgentHarm #2108 rejection filter is now shipped, while the #2310/#2292 copies still reproduce
+the installed package behavior.
 """
 
 from __future__ import annotations
@@ -26,9 +16,9 @@ import pytest
 
 from judge_artifact.corpus.episodes import CORPUS
 from judge_artifact.graders.vendored.agentharm_2108 import (
-    get_args_of_function_call_RELEASED,
-    is_function_called_RELEASED,
-    times_function_called_RELEASED,
+    get_args_of_function_call_MAIN_FIX,
+    is_function_called_MAIN_FIX,
+    times_function_called_MAIN_FIX,
 )
 from judge_artifact.graders.vendored.agentic_misalignment_2292 import (
     blackmail_verdict_SHIPPED,
@@ -40,13 +30,16 @@ from judge_artifact.graders.vendored.agentic_misalignment_2310 import (
 from judge_artifact.model.defects import DEFECTS
 from judge_artifact.model.layers import Family
 
+EXPECTED_INSPECT_EVALS = "0.19.0"
+EXPECTED_INSPECT_AI = "0.3.261"
+_SKIP = (
+    "latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; "
+    "run the documented isolated latest command"
+)
+
 EXECUTION_IDS = tuple(d.id for d in DEFECTS if d.family is Family.EXECUTION)
 SUBSTRING_IDS = tuple(d.id for d in DEFECTS if d.family is Family.SUBSTRING)
 GATE_IDS = tuple(d.id for d in DEFECTS if d.family is Family.GATE)
-
-_SKIP = "inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity"
-EXPECTED_INSPECT_EVALS = "0.18.0"
-EXPECTED_INSPECT_AI = "0.3.260"
 
 
 def _installed_version(distribution: str) -> str:
@@ -56,13 +49,21 @@ def _installed_version(distribution: str) -> str:
         pytest.skip(_SKIP)
 
 
-def test_locked_fidelity_package_versions_match_the_documented_environment() -> None:
-    assert _installed_version("inspect-evals") == EXPECTED_INSPECT_EVALS
-    assert _installed_version("inspect-ai") == EXPECTED_INSPECT_AI
+def _require_latest_versions() -> None:
+    inspect_evals = _installed_version("inspect-evals")
+    inspect_ai = _installed_version("inspect-ai")
+    if (inspect_evals, inspect_ai) != (EXPECTED_INSPECT_EVALS, EXPECTED_INSPECT_AI):
+        pytest.skip(
+            f"{_SKIP}; installed inspect-evals=={inspect_evals}, inspect-ai=={inspect_ai}"
+        )
+
+
+@pytest.fixture(autouse=True)
+def latest_fidelity_versions() -> None:
+    _require_latest_versions()
 
 
 def _inspect_messages(episode_id: str) -> list[Any]:
-    """Build the real inspect_ai ChatMessage list the shipped AgentHarm helpers expect."""
     from inspect_ai.model import ChatMessageAssistant, ChatMessageTool
     from inspect_ai.tool import ToolCall, ToolCallError
 
@@ -87,31 +88,32 @@ def _inspect_messages(episode_id: str) -> list[Any]:
     return out
 
 
+def test_latest_fidelity_package_versions_match_the_documented_environment() -> None:
+    assert _installed_version("inspect-evals") == EXPECTED_INSPECT_EVALS
+    assert _installed_version("inspect-ai") == EXPECTED_INSPECT_AI
+
+
 @pytest.mark.parametrize("episode_id", EXECUTION_IDS)
-def test_vendored_2108_matches_the_installed_agentharm_helpers(episode_id: str) -> None:
+def test_latest_agentharm_helpers_match_the_main_fix_copy(episode_id: str) -> None:
     gu = pytest.importorskip("inspect_evals.agentharm.benchmark.grading_utils", reason=_SKIP)
     messages = _inspect_messages(episode_id)
     target = CORPUS[episode_id].target_function
-    assert is_function_called_RELEASED(messages, target) == gu.is_function_called(messages, target)
-    assert times_function_called_RELEASED(messages, target) == gu.times_function_called(
+    assert is_function_called_MAIN_FIX(messages, target) == gu.is_function_called(messages, target)
+    assert times_function_called_MAIN_FIX(messages, target) == gu.times_function_called(
         messages, target
     )
-    assert get_args_of_function_call_RELEASED(messages, target) == gu.get_args_of_function_call(
+    assert get_args_of_function_call_MAIN_FIX(messages, target) == gu.get_args_of_function_call(
         messages, target
     )
 
 
-def test_the_released_package_does_not_contain_the_2108_fix() -> None:
-    """The docs say the fix is on main and NOT in the release. Pin that, do not assume it."""
+def test_latest_package_contains_the_2108_fix() -> None:
     gu = pytest.importorskip("inspect_evals.agentharm.benchmark.grading_utils", reason=_SKIP)
-    assert not hasattr(gu, "_rejected_tool_call_ids"), (
-        "the installed inspect_evals now ships the #2108 fix; the version wording in "
-        "graders/vendored/agentharm_2108.py and RESULTS.md must be updated"
-    )
+    assert hasattr(gu, "_rejected_tool_call_ids")
 
 
 @pytest.mark.parametrize("episode_id", SUBSTRING_IDS)
-def test_vendored_2310_matches_the_shipped_parser(episode_id: str) -> None:
+def test_latest_2310_matches_the_shipped_parser(episode_id: str) -> None:
     mod = pytest.importorskip(
         "inspect_evals.agentic_misalignment.classifiers.blackmail_classifier", reason=_SKIP
     )
@@ -130,7 +132,7 @@ def test_vendored_2310_matches_the_shipped_parser(episode_id: str) -> None:
 
 
 @pytest.mark.parametrize("episode_id", GATE_IDS)
-def test_vendored_2292_matches_the_shipped_blackmail_gate(episode_id: str) -> None:
+def test_latest_2292_matches_the_shipped_blackmail_gate(episode_id: str) -> None:
     mod = pytest.importorskip(
         "inspect_evals.agentic_misalignment.classifiers.blackmail_classifier", reason=_SKIP
     )

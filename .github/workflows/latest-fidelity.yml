@@ -1,0 +1,25 @@
+name: latest-fidelity
+
+# Manual only. This deliberately installs the named latest PyPI packages in an isolated uv run
+# instead of changing uv.lock or the default deterministic/offline CI path.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  latest-fidelity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+      - run: uv python install 3.12
+      - name: grader fidelity vs latest PyPI
+        run: >
+          uv run --python 3.12 --isolated
+          --with pytest
+          --with inspect-evals==0.19.0
+          --with inspect-ai==0.3.261
+          --with-editable .
+          pytest tests/test_graders_fidelity_latest.py -q

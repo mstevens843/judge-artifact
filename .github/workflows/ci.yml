@@ -64,9 +64,13 @@ jobs:
         run: uv run python -m judge_artifact.harness.arm_a
       - name: Arm B - decomposition on released AgentDojo transcripts
         run: uv run python -m judge_artifact.harness.arm_b
+      - name: Arm B - broader important_instructions sweep
+        run: uv run python -m judge_artifact.harness.arm_b --broad-important-instructions
       - name: Arm B - defense axis
         run: uv run python -m judge_artifact.harness.arm_b_defense
       - name: Arm D - denominator policy
         run: uv run python -m judge_artifact.harness.arm_d
+      - name: Arm C - no-call readiness receipt
+        run: uv run python -m judge_artifact.harness.arm_c
       - name: evidence must match the committed receipts
         run: git diff --exit-code -- evidence/

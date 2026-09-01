@@ -10,9 +10,10 @@ it.
 **Toolchain:** Python 3.12.13, uv 0.11.26, pytest 9.1.1, ruff 0.16.5, mypy 2.3.1 (strict), all via
 `uv run`. Fidelity checks against the locked environment: `inspect-evals 0.18.0` /
 `inspect-ai 0.3.260`.
-**External status checked:** 2026-09-01. The referenced GitHub issues/PRs remain open; current PyPI
-latest is `inspect-evals 0.19.0` / `inspect-ai 0.3.261`. This frozen artifact does not claim a
-fresh fidelity run against those newer packages.
+**External package status checked:** 2026-09-01. PyPI latest is `inspect-evals 0.19.0` /
+`inspect-ai 0.3.261`; the optional latest fidelity path passed against those exact versions on
+2026-09-01. Compatibility note: latest now ships the AgentHarm #2108 rejection filter, so it matches
+the `*_MAIN_FIX` copies rather than the locked 0.18.0 `*_RELEASED` copies.
 **Graders:** the real shipped decision logic, vendored/adapted with source and version, and checked
 against the installed `inspect_evals` on every corpus episode.
 **Corpus:** AgentDojo (MIT) at pinned commit `089ed468cf3ed0322acc66b0211f26d9d90dbf60`, normalised
@@ -24,15 +25,17 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 
 | Gate | Result |
 |---|---|
-| `uv run pytest` | **98 passed** |
+| `uv run pytest` | **111 passed, 17 skipped** - the skips are latest-fidelity tests when the locked fidelity environment is installed |
 | `uv run ruff check .` / `uv run mypy` (strict, incl. `scripts/`) | clean |
-| `uv run --extra fidelity pytest tests/test_graders_fidelity.py` | **16 passed** - local #2108, #2310 and #2292 copies reproduce the installed `inspect_evals` verdict on every episode |
+| `uv run --extra fidelity pytest tests/test_graders_fidelity.py` | **17 passed** - locked #2108, #2310 and #2292 copies reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260` |
+| latest PyPI fidelity command | **17 passed** against `inspect-evals 0.19.0` / `inspect-ai 0.3.261`; #2108 now matches the `*_MAIN_FIX` copies |
 | `uv run python -m judge_artifact.model` | 15 episodes x 8 graders, 3 families, pure derivation |
 | Arm A - real graders over the constructed corpus | **0 predicted-vs-observed disagreements**; both directions in every family |
 | Arm B - 3,986 released AgentDojo transcripts | a name-only success judge reports **+16.60 pp**; over-credit decomposes **12.4% error-blind / 69.0% argument-blind / 18.6% effect-blind** |
+| Arm B broader important_instructions sweep | **15,781 runs** across banking, slack, travel and workspace; name-only reports **+9.69 pp**, over-credit decomposes **7.4% error-blind / 73.8% argument-blind / 18.8% effect-blind** |
 | Arm B defense axis - 28 pipelines | ranking **does** invert: Kendall tau **0.68**, 23 of 28 positions moved; adding the argument check restores it to **0.95** |
 | Arm D - 33,119 attacked runs, denominator policy | corpus-wide **0.27 pp**; one published cell is **100%** crashed runs |
-| Arm C - LLM judge nondeterminism | harness runs; local CLI judge stable (flip rate 0); this substrate cannot exercise #4136 |
+| Arm C - LLM judge nondeterminism | temperature-controlled Inspect model path implemented and receipted; no real API run was performed on this machine |
 
 ## The headline, stated once
 
@@ -79,11 +82,15 @@ argument check brings it to 0.95.
   objects; runs the vendored `<answer>` parser against the shipped one; and runs the vendored
   blackmail gate against `BlackmailClassifier.classify` itself. It also asserts the released
   package does **not** contain the #2108 fix, so the version wording in this repo cannot silently
-  go stale.
+  go stale. `tests/test_graders_fidelity_latest.py` is the separate optional latest-PyPI check; for
+  `inspect-evals 0.19.0` / `inspect-ai 0.3.261`, the AgentHarm helpers match `*_MAIN_FIX` because
+  the rejection filter has shipped.
 - **The corpus has a committed producer.** `scripts/fetch_agentdojo_runs.py` rebuilds every data
   file from the pinned AgentDojo commit, keeping arguments, call ids and paired tool errors, and
-  extracting the attacker's arguments from AgentDojo's own `injection_tasks.py` with `ast`.
-  `data/agentdojo/MANIFEST.json` carries a SHA-256 of each output.
+  extracting the attacker's arguments from AgentDojo's own `injection_tasks.py` with `ast`. It also
+  writes a broader `important_instructions` corpus over all suites/tasks with statically matchable
+  target-call ground truth, plus explicit skipped-task reasons. `data/agentdojo/MANIFEST.json`
+  carries a SHA-256 of each output.
 - **Arm B runs the vendored graders, not a re-implementation.** It builds an `Episode` through
   `transcript.from_agentdojo_run` and grades through `graders/registry.py` - the same path Arm A
   uses.
@@ -93,7 +100,8 @@ argument check brings it to 0.95.
 - **Every observed run is receipted.** Each arm writes a canonical-JSON SHA-256 receipt. Arm B also
   writes a per-run verdict ledger (`evidence/arm-b-ledger.jsonl`, 3,986 rows), records its
   SHA-256 and the corpus SHA-256, and stores the full transcript, arguments and verdicts of every
-  run any document cites. The CI `arms` job regenerates all of it and fails on any diff.
+  run any document cites. The broader Arm B sweep writes a separate 15,781-row ledger and evidence
+  record. The CI `arms` job regenerates the deterministic headline artifacts and fails on any diff.
 
 ## Two corrections this project made to itself
 
@@ -117,14 +125,14 @@ implementation exactly.
 
 ## What this does not prove
 
-- **#4136 (temperature-1.0 judge nondeterminism).** This machine has no model API key and the local
-  `claude` CLI has no temperature control, so Arm C's flip rate is a floor that does not bound the
-  effect. The harness measures it directly on a substrate that has temperature control. Not faked
-  with paid calls chasing the wrong condition.
-- **Arm B and the defense axis are one suite and one attack.** Banking / important_instructions,
-  across every pipeline AgentDojo publishes for it. Whether the decomposition's shape holds on
-  workspace, travel or slack is open; the producer already normalises all four suites' run
-  summaries for Arm D, so the extension is a scoping change, not new machinery.
+- **#4136 (temperature-1.0 judge nondeterminism).** The real measurement path is implemented, but
+  no API call was made here because credentials and explicit paid-call approval were not supplied.
+  The local CLI path remains a smoke test only because it has no temperature control.
+- **Arm B headline and defense axis are one suite and one attack.** Banking /
+  important_instructions, across every pipeline AgentDojo publishes for it. The broader
+  important_instructions sweep now covers banking, slack, travel and workspace where static target
+  arguments can be extracted, but it does not cover other attacks and it excludes tasks whose
+  AgentDojo ground truth cannot be soundly normalized.
 - **Arm B measures a grader shape, not AgentHarm's reported score.** AgentHarm's per-task score is
   the unweighted mean of several components, only one of which is name-only. The +16.60 pp is what
   a single name-only success criterion costs; how much of an AgentHarm number it moves depends on
@@ -147,6 +155,8 @@ implementation exactly.
 uv sync --group dev
 uv run pytest && uv run ruff check . && uv run mypy
 uv run --extra fidelity pytest tests/test_graders_fidelity.py   # needs inspect-evals
+uv run --python 3.12 --isolated --with pytest --with inspect-evals==0.19.0 \
+  --with inspect-ai==0.3.261 --with-editable . pytest tests/test_graders_fidelity_latest.py -q
 
 # rebuild the corpus from the pinned AgentDojo commit (~37 MB download into work/, then offline)
 uv run python scripts/fetch_agentdojo_runs.py
@@ -154,10 +164,14 @@ uv run python scripts/fetch_agentdojo_runs.py
 uv run python -m judge_artifact.model                    # the predicted disagreement matrix
 uv run python -m judge_artifact.harness.arm_a            # real graders over the constructed corpus
 uv run python -m judge_artifact.harness.arm_b            # decomposition on 3,986 transcripts
+uv run python -m judge_artifact.harness.arm_b --broad-important-instructions
 uv run python -m judge_artifact.harness.arm_b_defense    # the defense axis and rank inversion
 uv run python -m judge_artifact.harness.arm_d            # denominator policy over 33,119 runs
-uv run python -m judge_artifact.harness.arm_c --n 4      # LLM judge nondeterminism (paid, bounded)
+uv run python -m judge_artifact.harness.arm_c            # no-call Arm C readiness receipt
 ```
 
-Everything above except the last line is deterministic and offline once the corpus is present, and
-the corpus is committed. `.github/workflows/ci.yml` runs all of it and fails if `evidence/` moves.
+The default CI path is deterministic and offline once dependencies and the committed corpus are
+present. The latest-PyPI fidelity command is intentionally isolated and network/package-version
+controlled, and the first corpus rebuild may download the pinned AgentDojo archive into `work/`.
+`.github/workflows/ci.yml` runs the deterministic evidence-producing commands and fails if
+`evidence/` moves.

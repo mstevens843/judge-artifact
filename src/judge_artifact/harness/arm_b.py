@@ -44,6 +44,7 @@ bug, it is a grader nobody has checked in both directions.
 
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 from collections.abc import Iterator
@@ -60,8 +61,12 @@ from ..transcript import Episode, episode_from_record
 ROOT = Path(__file__).resolve().parents[3]
 DATA = ROOT / "data" / "agentdojo"
 CORPUS = DATA / "banking_important_instructions.jsonl"
+BROAD_CORPUS = DATA / "important_instructions_all_suites.jsonl"
 MANIFEST = DATA / "MANIFEST.json"
 LEDGER = ROOT / "evidence" / "arm-b-ledger.jsonl"
+BROAD_LEDGER = ROOT / "evidence" / "arm-b-broad-ledger.jsonl"
+EVIDENCE = ROOT / "evidence" / "arm-b.json"
+BROAD_EVIDENCE = ROOT / "evidence" / "arm-b-broad.json"
 
 JUDGES: tuple[tuple[str, str], ...] = (
     ("name_only", "g_credit_uncalled"),
@@ -87,7 +92,11 @@ class Judged:
     bucket: str  # "" unless this run is an over-credit of the name-only judge
 
 
-def load(path: Path = CORPUS) -> Iterator[dict[str, Any]]:
+def load(
+    path: Path = CORPUS,
+    suites: set[str] | None = None,
+    attacks: set[str] | None = None,
+) -> Iterator[dict[str, Any]]:
     """Stream the normalised corpus a line at a time; it is 3.4 MB and never held whole."""
     if not path.exists():
         raise FileNotFoundError(
@@ -96,14 +105,19 @@ def load(path: Path = CORPUS) -> Iterator[dict[str, Any]]:
     with path.open() as fh:
         for line in fh:
             if line.strip():
-                yield json.loads(line)
+                row = json.loads(line)
+                if suites and str(row.get("suite")) not in suites:
+                    continue
+                if attacks and str(row.get("attack")) not in attacks:
+                    continue
+                yield row
 
 
 def judge_one(record: dict[str, Any]) -> Judged:
-    episode: Episode = episode_from_record(record)
-    attacker = dict(record.get("attacker_args") or {})
+    attacker = dict(record.get("match_args") or record.get("attacker_args") or {})
+    episode: Episode = episode_from_record(record, attacker_args=attacker)
     if not attacker:
-        raise ValueError(f"{record['id']}: no attacker arguments; the argument check is undefined")
+        raise ValueError(f"{record['id']}: no match arguments; the argument check is undefined")
     verdicts = {
         name: grade(gid, episode) is Verdict.SUCCESS for name, gid in JUDGES
     }
@@ -136,7 +150,7 @@ def _rate(hits: int, n: int) -> float:
     return round(hits / n, 4) if n else 0.0
 
 
-def analyze(rows: list[Judged]) -> dict[str, Any]:
+def analyze(rows: list[Judged], corpus: Path = CORPUS, ledger: Path = LEDGER) -> dict[str, Any]:
     n = len(rows)
     names = [name for name, _ in JUDGES]
     overall: dict[str, Any] = {
@@ -216,9 +230,9 @@ def analyze(rows: list[Judged]) -> dict[str, Any]:
     cited = [_full(r) for r in rows if r.id in cited_ids]
 
     return {
-        "corpus_sha256": _manifest_sha(CORPUS.name),
+        "corpus_sha256": _manifest_sha(corpus.name),
         "run_ledger": {
-            "file": str(LEDGER.relative_to(ROOT)),
+            "file": _relative(ledger),
             "rows": len(rows),
             "note": "one line per run: every judge verdict and its decomposition bucket",
         },
@@ -239,6 +253,40 @@ def analyze(rows: list[Judged]) -> dict[str, Any]:
     }
 
 
+def analyze_broad(rows: list[Judged], corpus: Path, ledger: Path) -> dict[str, Any]:
+    an = analyze(rows, corpus=corpus, ledger=ledger)
+    by_suite_attack: dict[tuple[str, str], dict[str, int]] = {}
+    names = [name for name, _ in JUDGES]
+    for row in rows:
+        key = (str(row.record.get("suite")), str(row.record.get("attack")))
+        cell = by_suite_attack.setdefault(
+            key, {"n": 0, "sound": 0, **{name: 0 for name in names}}
+        )
+        cell["n"] += 1
+        cell["sound"] += int(row.sound)
+        for name in names:
+            cell[name] += int(row.verdicts[name])
+    an["by_suite_attack"] = [
+        {
+            "suite": suite,
+            "attack": attack,
+            "n": cell["n"],
+            "sound_asr": _rate(cell["sound"], cell["n"]),
+            **{f"{name}_asr": _rate(cell[name], cell["n"]) for name in names},
+        }
+        for (suite, attack), cell in sorted(by_suite_attack.items())
+    ]
+    an["scope"] = {
+        "suites": sorted({str(row.record.get("suite")) for row in rows}),
+        "attacks": sorted({str(row.record.get("attack")) for row in rows}),
+        "normalization": (
+            "static matchable target arguments from AgentDojo injection-task ground_truth; "
+            "tasks without a nonempty statically matchable target-call spec are excluded"
+        ),
+    }
+    return an
+
+
 def _manifest_sha(name: str) -> str:
     """Bind the analysis to the exact corpus bytes it read, via the producer's own manifest."""
     if not MANIFEST.exists():
@@ -249,11 +297,10 @@ def _manifest_sha(name: str) -> str:
 def _full(row: Judged) -> dict[str, Any]:
     """Everything needed to replay one run's verdicts: the transcript, the oracle and the judges."""
     rec = row.record
-    return {
+    out = {
         "id": row.id,
         "source": rec.get("source"),
         "target_function": row.target,
-        "attacker_args": rec.get("attacker_args"),
         "tool_events": rec.get("tool_events"),
         "security": row.sound,
         "utility": rec.get("utility"),
@@ -262,17 +309,26 @@ def _full(row: Judged) -> dict[str, Any]:
         "arg_match_strict": row.strict,
         "bucket": row.bucket,
     }
+    if "attacker_args" in rec:
+        out["attacker_args"] = rec.get("attacker_args")
+    if "match_args" in rec:
+        out["match_args"] = rec.get("match_args")
+    return out
 
 
-def ledger_rows(rows: list[Judged]) -> list[dict[str, Any]]:
-    return [
-        {
+def ledger_rows(rows: list[Judged], include_scope: bool = False) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for r in rows:
+        row = {
             "id": r.id, "target": r.target, "security": r.sound, "run_errored": r.run_errored,
             **{f"judge_{k}": v for k, v in sorted(r.verdicts.items())},
             "arg_match_strict": r.strict, "bucket": r.bucket,
         }
-        for r in rows
-    ]
+        if include_scope:
+            row["suite"] = str(r.record.get("suite"))
+            row["attack"] = str(r.record.get("attack"))
+        out.append(row)
+    return out
 
 
 def render(an: dict[str, Any]) -> str:
@@ -318,24 +374,98 @@ def render(an: dict[str, Any]) -> str:
     return "\n".join(lines)
 
 
-def main() -> int:
-    rows = [judge_one(rec) for rec in load()]
-    LEDGER.parent.mkdir(parents=True, exist_ok=True)
-    LEDGER.write_text(
-        "".join(json.dumps(r, sort_keys=True) + "\n" for r in ledger_rows(rows))
+def render_broad(an: dict[str, Any]) -> str:
+    o = an["overall"]
+    names = [name for name, _ in JUDGES]
+    lines = [
+        f"Arm B broad - AgentDojo {', '.join(an['scope']['suites'])} / "
+        f"{', '.join(an['scope']['attacks'])}, {o['n']} runs",
+        "",
+        f"{'judge':22}{'ASR':>9}{'vs sound':>11}{'agrees with oracle':>21}",
+        f"{'sound (security oracle)':22}{o['sound_asr']:>9}{'-':>11}{'-':>21}",
+    ]
+    for name in names:
+        lines.append(
+            f"{name:22}{o['asr'][name]:>9}{o['gap_pp'][name]:>+10.2f}pp"
+            f"{o['agreement_pct'][name]:>20.2f}%"
+        )
+    oc = an["over_credit"]
+    lines += [
+        "",
+        f"over-credit of the name-only judge: {oc['total']}",
+        f"  error_blind    {oc['buckets']['error_blind']:>6}",
+        f"  argument_blind {oc['buckets']['argument_blind']:>6}",
+        f"  effect_blind   {oc['buckets']['effect_blind']:>6}",
+        "",
+        f"{'suite':16}{'attack':26}{'n':>7}{'sound':>8}{'name':>8}"
+        f"{'exec':>8}{'args':>8}",
+    ]
+    for row in an["by_suite_attack"]:
+        lines.append(
+            f"{row['suite']:16}{row['attack']:26}{row['n']:>7}"
+            f"{row['sound_asr']:>8.3f}{row['name_only_asr']:>8.3f}"
+            f"{row['executed_asr']:>8.3f}{row['arg_match_asr']:>8.3f}"
+        )
+    return "\n".join(lines)
+
+
+def _relative(path: Path) -> str:
+    try:
+        return str(path.relative_to(ROOT))
+    except ValueError:
+        return str(path)
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("--broad-important-instructions", action="store_true")
+    ap.add_argument("--corpus", type=Path, default=None)
+    ap.add_argument("--suite", action="append", default=[])
+    ap.add_argument("--attack", action="append", default=[])
+    args = ap.parse_args(argv)
+
+    default_run = (
+        not args.broad_important_instructions
+        and args.corpus is None
+        and not args.suite
+        and not args.attack
     )
-    an = analyze(rows)
-    an["run_ledger"]["sha256"] = hashlib.sha256(LEDGER.read_bytes()).hexdigest()
+    corpus = args.corpus or (BROAD_CORPUS if args.broad_important_instructions else CORPUS)
+    ledger = LEDGER if default_run else BROAD_LEDGER
+    out = EVIDENCE if default_run else BROAD_EVIDENCE
+    rows = [
+        judge_one(rec)
+        for rec in load(
+            corpus,
+            suites=set(args.suite) if args.suite else None,
+            attacks=set(args.attack) if args.attack else None,
+        )
+    ]
+    if not rows:
+        raise SystemExit("selected Arm B corpus/filter produced zero rows")
+
+    ledger.parent.mkdir(parents=True, exist_ok=True)
+    ledger.write_text(
+        "".join(
+            json.dumps(r, sort_keys=True) + "\n"
+            for r in ledger_rows(rows, include_scope=not default_run)
+        )
+    )
+    an = analyze(rows) if default_run else analyze_broad(rows, corpus=corpus, ledger=ledger)
+    an["run_ledger"]["sha256"] = hashlib.sha256(ledger.read_bytes()).hexdigest()
     record: dict[str, Any] = {
         "arm": "B",
-        "source": "AgentDojo banking/important_instructions, all released pipelines",
-        "corpus": str(CORPUS.relative_to(CORPUS.parents[2])),
+        "source": (
+            "AgentDojo banking/important_instructions, all released pipelines"
+            if default_run
+            else "AgentDojo broader important_instructions sweep over normalized suites/tasks"
+        ),
+        "corpus": _relative(corpus),
         "analysis": an,
     }
     record["receipt"] = receipt(record)
-    print(render(an))
-    print(f"wrote {LEDGER} ({len(rows)} rows)")
-    out = ROOT / "evidence" / "arm-b.json"
+    print(render(an) if default_run else render_broad(an))
+    print(f"wrote {ledger} ({len(rows)} rows)")
     out.write_text(json.dumps(record, indent=2, sort_keys=True))
     print(f"\nreceipt: {record['receipt']}\nwrote {out}")
     return 0

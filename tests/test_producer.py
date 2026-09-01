@@ -106,6 +106,128 @@ def test_extract_ground_truth_splits_attacker_scaffold_and_dynamic_values(
     assert ground_truth[7].attacker_args == {"password": "new_password"}
 
 
+def test_general_ground_truth_handles_multi_suite_versions_and_dynamic_values(
+    tmp_path: Path,
+) -> None:
+    _write_text(
+        tmp_path
+        / "src"
+        / "agentdojo"
+        / "default_suites"
+        / "v1"
+        / "workspace"
+        / "injection_tasks.py",
+        """
+class FunctionCall:
+    pass
+
+class InjectionTask0:
+    _RECIPIENT = "old@example.com"
+    def ground_truth(self, env):
+        return [
+            FunctionCall(
+                function="send_email",
+                placeholder_args={"recipients": [self._RECIPIENT], "subject": "$subject"},
+            )
+        ]
+""",
+    )
+    _write_text(
+        tmp_path
+        / "src"
+        / "agentdojo"
+        / "default_suites"
+        / "v1_2"
+        / "workspace"
+        / "injection_tasks.py",
+        """
+class FunctionCall:
+    pass
+
+class InjectionTask0:
+    _RECIPIENT = "new@example.com"
+    _BODY = "static body"
+    def ground_truth(self, env):
+        msg = f"prefix {self._BODY}"
+        return [
+            FunctionCall(
+                function="send_email",
+                placeholder_args={
+                    "recipients": [self._RECIPIENT],
+                    "body": msg,
+                    "subject": "$subject",
+                },
+            )
+        ]
+""",
+    )
+    _write_text(
+        tmp_path
+        / "src"
+        / "agentdojo"
+        / "default_suites"
+        / "v1"
+        / "slack"
+        / "injection_tasks.py",
+        """
+class FunctionCall:
+    pass
+
+class InjectionTask1:
+    _CHANNEL = "general"
+    def ground_truth(self, env):
+        return [
+            FunctionCall(
+                function="send_channel_message",
+                placeholder_args={"channel": self._CHANNEL, "body": "hello"},
+            )
+        ]
+""",
+    )
+    _write_text(
+        tmp_path
+        / "src"
+        / "agentdojo"
+        / "default_suites"
+        / "v1"
+        / "travel"
+        / "injection_tasks.py",
+        """
+class FunctionCall:
+    pass
+
+class InjectionTask2:
+    def ground_truth(self, env):
+        return [
+            FunctionCall(function="reserve_hotel", placeholder_args={"hotel": "$hotel"})
+        ]
+
+class InjectionTask3:
+    def ground_truth(self, env):
+        return []
+""",
+    )
+
+    ground_truth = producer.extract_general_ground_truth(
+        tmp_path,
+        suites=("slack", "travel", "workspace"),
+    )
+
+    workspace = ground_truth["workspace"][0]
+    assert workspace.included is True
+    assert workspace.source.endswith("v1_2/workspace/injection_tasks.py")
+    assert workspace.match_args == {
+        "recipients": ["new@example.com"],
+        "body": "prefix static body",
+    }
+    assert workspace.dynamic_keys == ["subject"]
+    assert ground_truth["slack"][1].match_args == {"channel": "general", "body": "hello"}
+    assert ground_truth["travel"][2].included is False
+    assert ground_truth["travel"][2].skipped_reason == "no_static_match_args"
+    assert ground_truth["travel"][3].skipped_reason == "empty_ground_truth"
+    assert list(ground_truth) == ["slack", "travel", "workspace"]
+
+
 def test_pipeline_splitting_uses_declared_defenses_only() -> None:
     pipelines = {"command-r", "command-r-plus", "model", "model-tool_filter"}
     defenses = ["tool_filter"]
@@ -139,4 +261,7 @@ def test_main_with_source_dir_keeps_committed_provenance_stable(
         assert "source-dir" not in json.dumps(doc["provenance"])
     manifest = json.loads((out / "MANIFEST.json").read_text())
     assert manifest["banking_important_instructions_runs"] == 1
+    assert manifest["important_instructions_all_suites_runs"] == 1
     assert manifest["denominator_cells"] == 1
+    assert (out / "ground_truth_important_instructions_all_suites.json").is_file()
+    assert (out / "important_instructions_all_suites.jsonl").is_file()

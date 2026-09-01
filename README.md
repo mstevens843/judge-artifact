@@ -63,23 +63,32 @@ to **0.95**.
   asserted; zero third-party dependencies in the model.
 - **The graders are the real shipped decision logic.** The AgentHarm counting helpers, the
   agentic_misalignment `<answer>` parser and `BlackmailClassifier.classify` are vendored/adapted
-  with their source and version, and `uv run --extra fidelity pytest` asserts the local copies
-  reproduce the **installed** `inspect_evals` verdicts on every episode - including that the
-  pinned released package does not contain the #2108 fix.
+  with their source and version. The locked path,
+  `uv run --extra fidelity pytest tests/test_graders_fidelity.py`, asserts the local copies
+  reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260`. The optional latest path,
+  `tests/test_graders_fidelity_latest.py`, was checked on 2026-09-01 against
+  `inspect-evals 0.19.0` / `inspect-ai 0.3.261`; there the AgentHarm helpers match the
+  `*_MAIN_FIX` copies because latest now ships the #2108 rejection filter.
 - **Arm A, both directions, deterministic.** `uv run python -m judge_artifact.harness.arm_a` runs
   the real graders over a constructed corpus and matches the prediction on every cell. The
   execution family is a ladder - name only, name + no error, name + attacker's arguments, state -
   and every rung that stops at the trace is still wrong in **both** directions.
 - **Arm B, the headline, on real data.** `uv run python -m judge_artifact.harness.arm_b` and
   `...harness.arm_b_defense`, over a corpus rebuilt by a committed producer from a pinned AgentDojo
-  commit.
+  commit. A separate broader sweep now runs
+  `uv run python -m judge_artifact.harness.arm_b --broad-important-instructions` over 15,781
+  statically matchable `important_instructions` runs across banking, slack, travel and workspace;
+  it is recorded in [results/08](./results/08-arm-b-broader-important-instructions.md) and does
+  not replace the banking headline.
 - **Arm D, the denominator.** `uv run python -m judge_artifact.harness.arm_d`. AgentDojo writes
   `security = True` when a run crashes (`benchmark.py` lines 129-130, source-verified), so a run in
   which the agent never acted is published as an attack success. Corpus-wide that is worth 0.27 pp
   - and one published cell (`command-r-plus`, workspace) is **100%** crashed runs: 8.3% reported,
   0.0% state-verified.
-- **Arm C, honestly bounded.** The judge-nondeterminism harness runs; the local CLI judge has no
-  temperature control, so this substrate cannot exercise #4136. Said, not hidden.
+- **Arm C, implemented but not measured here.** The harness now has a guarded Inspect model API
+  path with explicit temperature, seed if supported, model name and paid-call opt-in. No real API
+  measurement was performed on this machine; the local CLI route is labelled as a substrate smoke
+  test because it has no temperature control.
 
 **Do not cite a number from this repo that does not name the command that produced it.** Full
 record in [RESULTS.md](./RESULTS.md).
@@ -95,9 +104,9 @@ src/judge_artifact/graders/      runnable graders; shipped decision logic adapte
 src/judge_artifact/corpus/       the both-direction exploit episodes + controls
 src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), arm_c (LLM), arm_d (denominator)
 scripts/fetch_agentdojo_runs.py  the committed corpus producer: pinned commit, hashed outputs
-data/agentdojo/                  the normalised corpus + MANIFEST.json (3.4 MB, MIT)
-evidence/                        receipted observed artifacts, incl. a 3,986-row per-run ledger
-results/                         numbered, append-only lab notebook (00 substrate .. 07 denominator)
+data/agentdojo/                  normalised corpora + MANIFEST.json (MIT, hashed)
+evidence/                        receipted artifacts, incl. banking and broad Arm B ledgers
+results/                         numbered, append-only lab notebook (00 substrate .. 08 broad Arm B)
 ```
 
 ## What it does not do
@@ -105,9 +114,10 @@ results/                         numbered, append-only lab notebook (00 substrat
 It does not run the full Inspect harness (unnecessary: the graders under test are pure functions,
 reached directly). It does not claim to judge semantic harm that no execution trace settles, and
 names that floor. Its repaired execution grader is a **repair, not a sound grader** - it is fooled
-in both directions too, and the project says so and measures it. Arm B is one suite and one attack,
-across every pipeline released for them; a wider suite sweep is named as future work, not implied
-away. Arm D measures the denominator defect's *shape* on AgentDojo, where the policy is verifiable
+in both directions too, and the project says so and measures it. Arm B's headline is still one
+suite and one attack, across every pipeline released for them; the broader sweep is limited to
+`important_instructions` tasks whose AgentDojo ground truth has a statically matchable target-call
+spec. Arm D measures the denominator defect's *shape* on AgentDojo, where the policy is verifiable
 at source; it is not a measurement of Inspect's implementation.
 
 ## Corrections this project made to itself

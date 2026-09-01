@@ -24,10 +24,12 @@ Short cross-links:
 - `inspect_ai#4136` - https://github.com/UKGovernmentBEIS/inspect_ai/issues/4136
 - `inspect_ai#4286` - https://github.com/UKGovernmentBEIS/inspect_ai/issues/4286
 
-Status checked 2026-09-01: all listed issue/PR threads are open. Current PyPI latest is
-`inspect-evals 0.19.0` / `inspect-ai 0.3.261`; this artifact's fidelity checks are against the
-locked environment, `inspect-evals 0.18.0` / `inspect-ai 0.3.260`, and the note below does not
-claim a fresh fidelity run against the newer packages.
+Status checked 2026-09-01: PyPI latest is `inspect-evals 0.19.0` / `inspect-ai 0.3.261`.
+This artifact keeps the locked fidelity claim against `inspect-evals 0.18.0` /
+`inspect-ai 0.3.260`; a separate optional latest-fidelity command also passed on
+`inspect-evals 0.19.0` / `inspect-ai 0.3.261`. Compatibility note: latest now ships the AgentHarm
+#2108 rejection filter, so it matches this repo's `*_MAIN_FIX` copies rather than the locked
+0.18.0 `*_RELEASED` copies.
 
 ## Summary
 
@@ -103,6 +105,13 @@ attack success by name alone.
 negatives: its misses are exactly the 12 the error rule already had. That is the concrete input we
 would offer to the eval-design question the issue was reopened for.
 
+Supplementary breadth check: a separate broader sweep over statically matchable
+`important_instructions` tasks in banking, slack, travel and workspace covers 15,781 released runs.
+It is not a replacement for the banking headline because it uses a stricter generalized target-arg
+rule, but it finds the same qualitative mechanism: name-only reports +9.69 pp over the state oracle
+and 73.8% of its over-credit is argument-blind. Tasks whose AgentDojo `ground_truth` has no
+statically matchable target call are explicitly excluded in `data/agentdojo/MANIFEST.json`.
+
 ### 2. The over-correction that reopened #2108 is real, and fires on released data
 
 Two runs in this corpus have the shape the maintainer was worried about - the target call errored,
@@ -123,7 +132,9 @@ A version note, since the wording matters and we checked rather than assumed: as
 artifact, the fix from #2115 (`38bf05d4`) is present on `inspect_evals` main. It is **not** in the
 locked released package tested here, `inspect_evals 0.18.0`, and PR #2285 marked AgentHarm **6-B**,
 which predates it, as the recommended version. Our test suite pins the locked-release half of that
-claim so the disclosure cannot silently drift from its tested environment.
+claim so the disclosure cannot silently drift from its tested environment. Latest PyPI
+(`inspect_evals 0.19.0`) now contains the rejection filter; this repo's latest-fidelity test checks
+that path against the `*_MAIN_FIX` copies.
 
 ### 3. Repairing the judge reorders the defense leaderboard
 
@@ -163,19 +174,29 @@ the same cell reports 30.4%, of which 14.2 points are context-length failures.
 That both harnesses have a defensible-but-opposite policy, and that neither surfaces it in the
 reported number, is the argument for #4286's explicit denominator.
 
-### 5. #4136 - named and modelled, not measured
+### 5. #4136 - implemented path, not measured on this machine
 
-The harness for judge nondeterminism exists and runs, but this machine has no model API key and the
-local CLI judge exposes no temperature control, so its flip rate is a floor that does not bound the
-temperature-1.0 condition. Stated as unproven rather than filled in with a number from the wrong
-condition.
+The harness for judge nondeterminism now has a real temperature-controlled Inspect model API path:
+same borderline judge prompts, specified model, specified temperature, optional seed, per-sample
+verdicts, flip rate, pooled ASR, Wilson interval and receipt. It refuses provider or CLI model
+calls unless `--allow-paid-api` is supplied, and it checks common provider credential environment
+variables before attempting the call.
+
+No real API run was performed on this machine. The current receipted record is
+`implemented_not_measured`; the local CLI path is retained only as a substrate smoke test because it
+has no temperature control. The later command is:
+
+```
+uv run --extra fidelity python -m judge_artifact.harness.arm_c \
+  --provider inspect --model openai/gpt-4.1-mini --temperature 1.0 --n 30 --allow-paid-api
+```
 
 ## What we are offering
 
 - **The reproduction.** `uv run` from a clean checkout: the both-direction constructed corpus, the
   vendored graders with a fidelity test against the installed package, the AgentDojo re-scoring and
-  decomposition, the defense-axis ranking, the denominator measurement, and a receipted per-run
-  ledger for all 3,986 runs.
+  decomposition, the broader important_instructions sweep, the defense-axis ranking, the
+  denominator measurement, and receipted per-run ledgers for both Arm B corpora.
 - **For #2108:** the decomposition above, the two over-correction transcripts, and the finding that
   an argument check is a free improvement on this corpus - offered as input to the eval-design
   discussion the issue was reopened for, not as a unilateral fix. If a regression corpus covering

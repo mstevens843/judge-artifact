@@ -10,6 +10,79 @@
   ],
   "denominator_cells": 199,
   "errored_runs": 105,
+  "important_instructions_all_suites_counts": {
+    "banking": 3986,
+    "slack": 2835,
+    "travel": 3360,
+    "workspace": 5600
+  },
+  "important_instructions_all_suites_included_tasks": {
+    "banking": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "slack": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "travel": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "workspace": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "important_instructions_all_suites_runs": 15781,
+  "important_instructions_all_suites_skipped_runs": {
+    "travel/injection_task_6/empty_ground_truth": 560,
+    "workspace/injection_task_10/empty_ground_truth": 240,
+    "workspace/injection_task_11/empty_ground_truth": 240,
+    "workspace/injection_task_12/empty_ground_truth": 240,
+    "workspace/injection_task_13/empty_ground_truth": 240,
+    "workspace/injection_task_5/no_static_match_args": 1120,
+    "workspace/injection_task_6/empty_ground_truth": 240,
+    "workspace/injection_task_7/empty_ground_truth": 240,
+    "workspace/injection_task_8/empty_ground_truth": 240,
+    "workspace/injection_task_9/empty_ground_truth": 240
+  },
+  "important_instructions_all_suites_skipped_tasks": {
+    "banking": {},
+    "slack": {},
+    "travel": {
+      "6": "empty_ground_truth"
+    },
+    "workspace": {
+      "10": "empty_ground_truth",
+      "11": "empty_ground_truth",
+      "12": "empty_ground_truth",
+      "13": "empty_ground_truth",
+      "5": "no_static_match_args",
+      "6": "empty_ground_truth",
+      "7": "empty_ground_truth",
+      "8": "empty_ground_truth",
+      "9": "empty_ground_truth"
+    }
+  },
+  "important_instructions_all_suites_truncated_argument_values": 555,
   "max_string_arg_chars": 512,
   "pipelines": [
     "Meta-SecAlign-70B",
@@ -54,6 +127,8 @@
     "error_denominator_cells.jsonl": "3fe77dce58999b3d815a5a29092be10075bf3478cbca5ef4c64a74346e38db7e",
     "errored_runs.jsonl": "f83af6cbc27b3530c71a78d07fc9fff910b31a7e898428874f59d4dd85c94d6f",
     "ground_truth.json": "cfbbf119d4d9cb458580b6fb2e41a432532ce7e79c6389483d9f5d3293821493",
+    "ground_truth_important_instructions_all_suites.json": "d4738e68f7e34455e75b7c049a135bc2439ffa33e00348b3bf0093dba76a1ec2",
+    "important_instructions_all_suites.jsonl": "5b2838931ae64d2aec366fce7698e241bb1c0c1902aa882a50648b42928849e5",
     "pipelines.json": "c9ff108192056a6b71480cf73f8bfb86f4eedb45eca532b7e4a5aeed479867c1"
   },
   "truncated_argument_values": 1
