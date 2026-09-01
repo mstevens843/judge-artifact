@@ -93,7 +93,7 @@ GRADERS: tuple[Grader, ...] = (
     Grader(
         id="g_credit_executed",
         slug="credit_executed",
-        summary="The #2108 fix, live on inspect_evals main but not in the released 0.18.0: treats "
+        summary="The #2108 main-branch fix, not in the locked released 0.18.0: treats "
         "ANY tool error as a rejection and skips the call. Removes one class of over-credit and "
         "adds an under-credit - a call that errored non-fatally yet still achieved its effect is "
         "scored a failure. Still name-only: it never reads the arguments.",

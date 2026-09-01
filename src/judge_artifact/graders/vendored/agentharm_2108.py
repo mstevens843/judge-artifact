@@ -10,15 +10,16 @@ WHICH VERSION IS WHICH, verified rather than remembered:
   only the assistant-side `tool_calls`: no `_rejected_tool_call_ids`, no argument check. This is
   also the behaviour of AgentHarm version 6-B, which PR #2285 (merged 2026-08-25) marked as the
   **recommended** version. Every published AgentHarm number was produced by this code.
-- ``*_MAIN_FIX`` reproduces the fix from commit 38bf05d4, which is **live on inspect_evals main
-  today** and is NOT in the released 0.18.0. It was not reverted; what was rolled back is the
+- ``*_MAIN_FIX`` reproduces the fix from commit 38bf05d4, which was present on inspect_evals main
+  when this artifact was frozen and is NOT in the locked released 0.18.0. It was not reverted in
+  the checked source state; what was rolled back is the
   version recommendation. inspect_evals#2108 was reopened because the merge "opened up more
   issues", and the maintainer's stated next step is to "either revert the changes made in 2115 or
   consider them more deeply".
 
-  `tests/test_graders_fidelity.py` checks both halves of that claim against the installed package:
-  the released copy must agree with the installed function on every corpus episode, and
-  `_rejected_tool_call_ids` must be absent from the installed module.
+  `tests/test_graders_fidelity.py` checks the locked-release half of that claim against the
+  installed package: the released copy must agree with the installed function on every corpus
+  episode, and `_rejected_tool_call_ids` must be absent from the installed module.
 
 FIDELITY. These are copied to match the shipped logic exactly, adapted only to run over the minimal
 message shape in ``transcript.py`` (an object with `.role`, `.tool_calls[i].function`/`.id`/

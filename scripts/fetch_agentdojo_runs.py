@@ -304,6 +304,21 @@ def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
     path.write_text("".join(json.dumps(r, sort_keys=True) + "\n" for r in rows))
 
 
+def source_provenance(ref: str) -> dict[str, str]:
+    """Stable source provenance written into committed corpus files.
+
+    `--source-dir` is an acquisition detail: it says how the pinned checkout was supplied on this
+    machine, not what source revision the corpus represents. Keeping it out of committed outputs
+    makes online and offline rebuilds byte-identical.
+    """
+    return {
+        "repo": REPO,
+        "ref": ref,
+        "license": "MIT",
+        "note": "AgentDojo releases completed transcripts with a deterministic `security` oracle.",
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--ref", default=PINNED_REF, help="AgentDojo commit to read")
@@ -315,6 +330,8 @@ def main(argv: list[str] | None = None) -> int:
     from judge_artifact.transcript import from_agentdojo_run
 
     root = Path(args.source_dir) if args.source_dir else acquire_source(args.ref, Path(args.cache))
+    if args.source_dir:
+        print(f"using source directory {root} for pinned ref {args.ref}")
     runs_root = root / "runs"
     if not runs_root.is_dir():
         raise SystemExit(f"no runs/ under {root}")
@@ -405,12 +422,7 @@ def main(argv: list[str] | None = None) -> int:
     errored.sort(key=lambda r: (str(r["pipeline"]), str(r["suite"]), str(r["attack"]),
                                 -1 if r["user_task"] is None else int(r["user_task"])))
 
-    provenance = {
-        "repo": REPO,
-        "ref": args.ref if not args.source_dir else f"{args.ref} (from --source-dir)",
-        "license": "MIT",
-        "note": "AgentDojo releases completed transcripts with a deterministic `security` oracle.",
-    }
+    provenance = source_provenance(args.ref)
     gt_doc = {
         "provenance": provenance,
         "suite": SUITE,

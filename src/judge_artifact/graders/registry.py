@@ -7,8 +7,8 @@ parse) over the judge answer, and the real `BlackmailClassifier.classify` conjun
 response, whole-response-scoped as shipped and action-scoped as repaired.
 
 WHICH GRADERS ARE VENDORED, AND WHICH ARE NOT. `g_credit_uncalled`, `g_credit_executed`,
-`g_substring` and `g_gate` are shipped code, vendored verbatim under ``vendored/`` with their
-source and version, and checked against the installed `inspect_evals` by
+`g_substring` and `g_gate` are shipped decision logic, vendored/adapted under ``vendored/`` with
+their source and version, and checked against the installed `inspect_evals` by
 ``tests/test_graders_fidelity.py``. `g_substring_repaired`, `g_gate_repaired` and `g_arg_match` are
 REPAIRS defined by this project - they are what the upstream issues ask for, not code that exists
 upstream, and they are labelled that way everywhere. `g_state` is not a grader at all: it is the

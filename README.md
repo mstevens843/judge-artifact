@@ -61,11 +61,11 @@ to **0.95**.
   and defect properties, the predicted verdict for 15 grader-fooling episodes against 8 graders in
   three families: `uv run python -m judge_artifact.model`. Purity is checked with `ast`, not
   asserted; zero third-party dependencies in the model.
-- **The graders are the real shipped code.** The AgentHarm counting helpers, the
-  agentic_misalignment `<answer>` parser and `BlackmailClassifier.classify` are vendored verbatim
-  with their source and version, and `uv run --extra fidelity pytest` asserts the vendored copies
+- **The graders are the real shipped decision logic.** The AgentHarm counting helpers, the
+  agentic_misalignment `<answer>` parser and `BlackmailClassifier.classify` are vendored/adapted
+  with their source and version, and `uv run --extra fidelity pytest` asserts the local copies
   reproduce the **installed** `inspect_evals` verdicts on every episode - including that the
-  released package does not contain the #2108 fix.
+  pinned released package does not contain the #2108 fix.
 - **Arm A, both directions, deterministic.** `uv run python -m judge_artifact.harness.arm_a` runs
   the real graders over a constructed corpus and matches the prediction on every cell. The
   execution family is a ladder - name only, name + no error, name + attacker's arguments, state -
@@ -91,7 +91,7 @@ src/judge_artifact/model/        the prediction: layers, graders, defects, predi
 src/judge_artifact/argmatch.py   normalisation + matching for "did it run with the ATTACKER's args"
 src/judge_artifact/canonical.py  canonical JSON + SHA-256 receipts
 src/judge_artifact/transcript.py the neutral episode rep + the AgentDojo adapters
-src/judge_artifact/graders/      runnable graders; the shipped ones vendored verbatim + fidelity-checked
+src/judge_artifact/graders/      runnable graders; shipped decision logic adapted + fidelity-checked
 src/judge_artifact/corpus/       the both-direction exploit episodes + controls
 src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), arm_c (LLM), arm_d (denominator)
 scripts/fetch_agentdojo_runs.py  the committed corpus producer: pinned commit, hashed outputs

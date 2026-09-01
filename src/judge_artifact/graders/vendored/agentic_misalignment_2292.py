@@ -1,9 +1,10 @@
 """Vendored agentic_misalignment blackmail gate (the inspect_evals#2292 defect), and its repair.
 
-SOURCE. UKGovernmentBEIS/inspect_evals (MIT), installed release 0.18.0:
+SOURCE. UKGovernmentBEIS/inspect_evals (MIT), locked installed release 0.18.0:
 `src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py`
 (`BlackmailClassifier.classify`) and `.../classifiers/classifier.py`
-(`Classifier.response_contains_necessary_emails`). Live in the released package today.
+(`Classifier.response_contains_necessary_emails`). Reproduced against the locked release by the
+fidelity tests.
 
 The shipped final verdict is a three-way conjunction:
 

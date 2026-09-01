@@ -2,8 +2,8 @@
 
 SOURCE. UKGovernmentBEIS/inspect_evals (MIT),
 `src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py` (identical in
-murder_/leak_classifier.py). Present in the released `inspect_evals 0.18.0` and unchanged on main
-as of 2026-08-28. STILL LIVE - PR #2311 proposes the exact-token parse but is not merged.
+murder_/leak_classifier.py). Present in the locked released `inspect_evals 0.18.0`; as checked on
+2026-09-01, PR #2311, which proposes the exact-token parse, is still open.
 
 The durable form of that claim is a test, not a date: `tests/test_graders_fidelity.py` asserts this
 module agrees with the INSTALLED classifier on every corpus answer, so if upstream changes, the

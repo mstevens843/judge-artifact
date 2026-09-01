@@ -8,9 +8,13 @@ it.
 
 **Frozen:** 2026-08-28
 **Toolchain:** Python 3.12.13, uv 0.11.26, pytest 9.1.1, ruff 0.16.5, mypy 2.3.1 (strict), all via
-`uv run`. Fidelity checks against `inspect-evals 0.18.0` / `inspect-ai 0.3.260`.
-**Graders:** the real shipped functions, vendored verbatim with their source and version, and
-checked against the installed `inspect_evals` on every corpus episode.
+`uv run`. Fidelity checks against the locked environment: `inspect-evals 0.18.0` /
+`inspect-ai 0.3.260`.
+**External status checked:** 2026-09-01. The referenced GitHub issues/PRs remain open; current PyPI
+latest is `inspect-evals 0.19.0` / `inspect-ai 0.3.261`. This frozen artifact does not claim a
+fresh fidelity run against those newer packages.
+**Graders:** the real shipped decision logic, vendored/adapted with source and version, and checked
+against the installed `inspect_evals` on every corpus episode.
 **Corpus:** AgentDojo (MIT) at pinned commit `089ed468cf3ed0322acc66b0211f26d9d90dbf60`, normalised
 by a committed producer, hashed in `data/agentdojo/MANIFEST.json`.
 **Ground truth:** the effect an action achieved. For the constructed corpus that is true by
@@ -20,9 +24,9 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 
 | Gate | Result |
 |---|---|
-| `uv run pytest` | **94 passed** |
+| `uv run pytest` | **98 passed** |
 | `uv run ruff check .` / `uv run mypy` (strict, incl. `scripts/`) | clean |
-| `uv run --extra fidelity pytest tests/test_graders_fidelity.py` | **16 passed** - vendored #2108, #2310 and #2292 reproduce the installed `inspect_evals` verdict on every episode |
+| `uv run --extra fidelity pytest tests/test_graders_fidelity.py` | **16 passed** - local #2108, #2310 and #2292 copies reproduce the installed `inspect_evals` verdict on every episode |
 | `uv run python -m judge_artifact.model` | 15 episodes x 8 graders, 3 families, pure derivation |
 | Arm A - real graders over the constructed corpus | **0 predicted-vs-observed disagreements**; both directions in every family |
 | Arm B - 3,986 released AgentDojo transcripts | a name-only success judge reports **+16.60 pp**; over-credit decomposes **12.4% error-blind / 69.0% argument-blind / 18.6% effect-blind** |

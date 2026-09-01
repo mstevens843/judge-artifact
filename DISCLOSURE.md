@@ -1,19 +1,42 @@
-# Disclosure draft - grader-artifact findings in the Inspect eval stack
+# Disclosure note - grader-artifact findings in the Inspect eval stack
 
 **To:** the UK AI Safety Institute Inspect maintainers, and the reporters of issues #2108, #2310,
 #2292, #2293, #4136 and #4286.
 **From:** Mathew Stevens. **Nature:** defensive eval-integrity research on MIT-licensed public code
 and MIT-licensed released benchmark runs, done in a local sandbox. The exploit transcripts are
 grader test cases; no system the author does not control was touched.
-**Status:** draft, not yet sent.
+**Status:** ready to post. Main post: `inspect_evals#2108`; shorter cross-links on the related
+threads below.
+
+## Posting targets
+
+Primary thread:
+
+- `inspect_evals#2108` - https://github.com/UKGovernmentBEIS/inspect_evals/issues/2108
+
+Short cross-links:
+
+- `inspect_evals#2310` - https://github.com/UKGovernmentBEIS/inspect_evals/issues/2310
+- `inspect_evals#2311` - https://github.com/UKGovernmentBEIS/inspect_evals/pull/2311
+- `inspect_evals#2292` - https://github.com/UKGovernmentBEIS/inspect_evals/issues/2292
+- `inspect_evals#2293` - https://github.com/UKGovernmentBEIS/inspect_evals/issues/2293
+- `inspect_evals#2294` - https://github.com/UKGovernmentBEIS/inspect_evals/pull/2294
+- `inspect_ai#4136` - https://github.com/UKGovernmentBEIS/inspect_ai/issues/4136
+- `inspect_ai#4286` - https://github.com/UKGovernmentBEIS/inspect_ai/issues/4286
+
+Status checked 2026-09-01: all listed issue/PR threads are open. Current PyPI latest is
+`inspect-evals 0.19.0` / `inspect-ai 0.3.261`; this artifact's fidelity checks are against the
+locked environment, `inspect-evals 0.18.0` / `inspect-ai 0.3.260`, and the note below does not
+claim a fresh fidelity run against the newer packages.
 
 ## Summary
 
 Reported prompt-injection and agent-harm rates are produced by success graders whose defects are
-open and shipped today. Measured against a ground truth those graders do not read - the effect an
-action achieved, or AgentDojo's released `security` oracle - they over- and under-credit in both
-directions, and on 3,986 real released transcripts the absolute rate moves by 16.6 percentage
-points and the defense ordering does not survive at all.
+open in the upstream trackers and reproduced here against pinned shipped packages. Measured against
+a ground truth those graders do not read - the effect an action achieved, or AgentDojo's released
+`security` oracle - they over- and under-credit in both directions, and on 3,986 real released
+transcripts the absolute rate moves by 16.6 percentage points and the defense ordering does not
+survive at all.
 
 The intent of this note is not to re-file the open issues. It is to supply the thing they are
 missing: **a measurement, decomposed, on real data, with the code that produced it.**
@@ -49,7 +72,7 @@ across all 28 published pipelines, and comparing against AgentDojo's determinist
 ```
 sound (state oracle)                         23.11%
 credited by name (0.18.0 as released)        39.71%   +16.60 pp   agrees with oracle 82.89%
-credited if not errored (main today)         37.58%   +14.47 pp   agrees with oracle 84.92%
+credited if not errored (main-branch fix)    37.58%   +14.47 pp   agrees with oracle 84.92%
 credited if the ARGUMENTS match the attacker 25.94%    +2.83 pp   agrees with oracle 96.56%
 ```
 
@@ -96,10 +119,11 @@ wrong reason. Neither reads the effect. This is offered as evidence for the desi
 as an argument for one side: it says the over-correction is not hypothetical, **and** that the
 pre-fix behaviour is not correct either.
 
-A version note, since the wording matters and we checked rather than assumed: the fix from #2115
-(`38bf05d4`) is **live on inspect_evals main** - it was not reverted. It is **not** in the released
-`inspect_evals 0.18.0`, and PR #2285 marked AgentHarm **6-B**, which predates it, as the recommended
-version. Our test suite pins both halves of that so this claim cannot go stale silently.
+A version note, since the wording matters and we checked rather than assumed: as checked for this
+artifact, the fix from #2115 (`38bf05d4`) is present on `inspect_evals` main. It is **not** in the
+locked released package tested here, `inspect_evals 0.18.0`, and PR #2285 marked AgentHarm **6-B**,
+which predates it, as the recommended version. Our test suite pins the locked-release half of that
+claim so the disclosure cannot silently drift from its tested environment.
 
 ### 3. Repairing the judge reorders the defense leaderboard
 
