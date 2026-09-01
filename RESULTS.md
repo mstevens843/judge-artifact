@@ -35,7 +35,12 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 | Arm B broader important_instructions sweep | **15,781 runs** across banking, slack, travel and workspace; name-only reports **+9.69 pp**, over-credit decomposes **7.4% error-blind / 73.8% argument-blind / 18.8% effect-blind** |
 | Arm B defense axis - 28 pipelines | ranking **does** invert: Kendall tau **0.68**, 23 of 28 positions moved; adding the argument check restores it to **0.95** |
 | Arm D - 33,119 attacked runs, denominator policy | corpus-wide **0.27 pp**; one published cell is **100%** crashed runs |
-| Arm C - LLM judge nondeterminism | temperature-controlled Inspect model path implemented and receipted; no real API run was performed on this machine |
+| Arm C - LLM judge nondeterminism | measured on 2026-09-01 through `inspect_ai` + `anthropic/claude-haiku-4-5-20251001` at temperature 1.0, n=30 per prompt: **0 flips**, pooled ASR **0.5000**, Wilson 95% **[0.3773, 0.6227]** |
+
+Arm C receipt:
+`ja1_b83f485c5c1a24db8391ad079bec350dcc67397c913a75e80fe6fd64b4deba33`.
+Package context for that paid run: `inspect-ai 0.3.260`, `inspect-evals 0.18.0`,
+`anthropic 1.2.0`.
 
 ## The headline, stated once
 
@@ -125,9 +130,12 @@ implementation exactly.
 
 ## What this does not prove
 
-- **#4136 (temperature-1.0 judge nondeterminism).** The real measurement path is implemented, but
-  no API call was made here because credentials and explicit paid-call approval were not supplied.
-  The local CLI path remains a smoke test only because it has no temperature control.
+- **#4136 (temperature-1.0 judge nondeterminism).** The real measurement path has now been run on
+  one API substrate: `inspect_ai` with `anthropic/claude-haiku-4-5-20251001`, explicit
+  `GenerateConfig(temperature=1.0, seed=None, max_tokens=32)`, 30 samples for each of two
+  borderline judge prompts. This sample observed no flips. It is evidence for this measured
+  substrate only; it does not prove that other providers, models, prompts, or grader call sites are
+  stable or unstable.
 - **Arm B headline and defense axis are one suite and one attack.** Banking /
   important_instructions, across every pipeline AgentDojo publishes for it. The broader
   important_instructions sweep now covers banking, slack, travel and workspace where static target
@@ -167,11 +175,18 @@ uv run python -m judge_artifact.harness.arm_b            # decomposition on 3,98
 uv run python -m judge_artifact.harness.arm_b --broad-important-instructions
 uv run python -m judge_artifact.harness.arm_b_defense    # the defense axis and rank inversion
 uv run python -m judge_artifact.harness.arm_d            # denominator policy over 33,119 runs
-uv run python -m judge_artifact.harness.arm_c            # no-call Arm C readiness receipt
+uv run python -m judge_artifact.harness.arm_c --out /tmp/arm-c-readiness.json
+
+# optional paid/API Arm C measurement; requires Anthropic credentials and workspace header when
+# using an identity-linked key
+ANTHROPIC_API_KEY=<key> ANTHROPIC_WORKSPACE_ID=<workspace-id> \
+  uv run --extra fidelity --with anthropic python -m judge_artifact.harness.arm_c \
+  --provider inspect --model anthropic/claude-haiku-4-5-20251001 \
+  --temperature 1.0 --n 30 --allow-paid-api
 ```
 
 The default CI path is deterministic and offline once dependencies and the committed corpus are
 present. The latest-PyPI fidelity command is intentionally isolated and network/package-version
 controlled, and the first corpus rebuild may download the pinned AgentDojo archive into `work/`.
-`.github/workflows/ci.yml` runs the deterministic evidence-producing commands and fails if
-`evidence/` moves.
+`.github/workflows/ci.yml` runs the deterministic evidence-producing commands, exercises the Arm C
+no-call path into `/tmp`, and fails if committed deterministic evidence moves.

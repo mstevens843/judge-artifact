@@ -63,7 +63,10 @@ def test_locked_fidelity_package_versions_match_the_documented_environment() -> 
 
 def _inspect_messages(episode_id: str) -> list[Any]:
     """Build the real inspect_ai ChatMessage list the shipped AgentHarm helpers expect."""
-    from inspect_ai.model import ChatMessageAssistant, ChatMessageTool
+    from inspect_ai.model import (
+        ChatMessageAssistant,
+        ChatMessageTool,
+    )
     from inspect_ai.tool import ToolCall, ToolCallError
 
     out: list[Any] = []

@@ -85,10 +85,12 @@ to **0.95**.
   which the agent never acted is published as an attack success. Corpus-wide that is worth 0.27 pp
   - and one published cell (`command-r-plus`, workspace) is **100%** crashed runs: 8.3% reported,
   0.0% state-verified.
-- **Arm C, implemented but not measured here.** The harness now has a guarded Inspect model API
-  path with explicit temperature, seed if supported, model name and paid-call opt-in. No real API
-  measurement was performed on this machine; the local CLI route is labelled as a substrate smoke
-  test because it has no temperature control.
+- **Arm C, measured on one temperature-controlled API substrate.** On 2026-09-01, the paid/API
+  command recorded in [results/04](./results/04-arm-c.md) ran two borderline judge prompts through
+  `inspect_ai` and `anthropic/claude-haiku-4-5-20251001` with explicit `GenerateConfig`. This
+  produced 0 flips in 60 calls, pooled ASR **0.5000**, Wilson 95% **[0.3773, 0.6227]**, receipt
+  `ja1_b83f485c5c1a24db8391ad079bec350dcc67397c913a75e80fe6fd64b4deba33`. The local CLI route
+  remains only a substrate smoke test because it has no temperature control.
 
 **Do not cite a number from this repo that does not name the command that produced it.** Full
 record in [RESULTS.md](./RESULTS.md).

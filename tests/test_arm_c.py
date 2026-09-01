@@ -51,6 +51,10 @@ def test_parse_args_accepts_temperature_seed_and_provider() -> None:
             "123",
             "--n",
             "5",
+            "--anthropic-workspace-id",
+            "wrkspc_test",
+            "--out",
+            "/tmp/arm-c-test.json",
             "--allow-paid-api",
         ]
     )
@@ -59,7 +63,24 @@ def test_parse_args_accepts_temperature_seed_and_provider() -> None:
     assert config.temperature == 0.7
     assert config.seed == 123
     assert config.n_per_item == 5
+    assert config.anthropic_workspace_id == "wrkspc_test"
+    assert str(config.output_path) == "/tmp/arm-c-test.json"
     assert config.allow_paid_api is True
+
+
+def test_parse_args_reads_anthropic_workspace_id_from_env(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_env")
+    config = arm_c.parse_args([])
+    assert config.anthropic_workspace_id == "wrkspc_env"
+
+
+def test_extra_headers_include_anthropic_workspace_id_only_for_anthropic_models() -> None:
+    config = _config(
+        model="anthropic/claude-haiku-4-5-20251001",
+        anthropic_workspace_id="wrkspc_test",
+    )
+    assert arm_c._extra_headers(config) == {"anthropic-workspace-id": "wrkspc_test"}
+    assert arm_c._extra_headers(_config(model="openai/gpt-4.1-mini")) is None
 
 
 def test_parse_verdict_uses_the_shipped_substring_parser() -> None:
@@ -105,6 +126,12 @@ def test_mocked_provider_responses_are_aggregated_and_receiptable() -> None:
     assert result["provider"] == "mock_provider"
     assert result["temperature"] == 1.0
     assert result["seed"] == 7
+    assert result["generation_config"] == {
+        "temperature": 1.0,
+        "seed": 7,
+        "max_tokens": 32,
+        "extra_header_names": [],
+    }
     assert result["n_per_item"] == 2
     assert result["prompt_case_ids"] == ["b1", "b2"]
     assert result["flip_rate"] == 0.5

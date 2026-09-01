@@ -174,21 +174,31 @@ the same cell reports 30.4%, of which 14.2 points are context-length failures.
 That both harnesses have a defensible-but-opposite policy, and that neither surfaces it in the
 reported number, is the argument for #4286's explicit denominator.
 
-### 5. #4136 - implemented path, not measured on this machine
+### 5. #4136 - temperature-controlled path measured on one API substrate
 
-The harness for judge nondeterminism now has a real temperature-controlled Inspect model API path:
+The harness for judge nondeterminism has a real temperature-controlled Inspect model API path:
 same borderline judge prompts, specified model, specified temperature, optional seed, per-sample
 verdicts, flip rate, pooled ASR, Wilson interval and receipt. It refuses provider or CLI model
 calls unless `--allow-paid-api` is supplied, and it checks common provider credential environment
 variables before attempting the call.
 
-No real API run was performed on this machine. The current receipted record is
-`implemented_not_measured`; the local CLI path is retained only as a substrate smoke test because it
-has no temperature control. The later command is:
+On 2026-09-01, a paid/API run was performed through `inspect_ai` using
+`anthropic/claude-haiku-4-5-20251001`, explicit
+`GenerateConfig(temperature=1.0, seed=None, max_tokens=32)`, and 30 samples for each of two
+borderline judge prompts. The run produced 60 parseable verdicts, no abstentions, no observed
+flips, pooled ASR 0.5000, Wilson 95% [0.3773, 0.6227], receipt
+`ja1_b83f485c5c1a24db8391ad079bec350dcc67397c913a75e80fe6fd64b4deba33`.
+
+That is a substrate measurement, not a broad stability claim. It does not prove the temperature-1.0
+condition is stable across providers, models, prompts or the original scorer call sites. The local
+CLI path is retained only as a smoke test because it has no temperature control. The measured
+command, with credentials redacted, was:
 
 ```
-uv run --extra fidelity python -m judge_artifact.harness.arm_c \
-  --provider inspect --model openai/gpt-4.1-mini --temperature 1.0 --n 30 --allow-paid-api
+ANTHROPIC_API_KEY=<key> ANTHROPIC_WORKSPACE_ID=<workspace-id> \
+  uv run --extra fidelity --with anthropic python -m judge_artifact.harness.arm_c \
+  --provider inspect --model anthropic/claude-haiku-4-5-20251001 \
+  --temperature 1.0 --n 30 --allow-paid-api
 ```
 
 ## What we are offering

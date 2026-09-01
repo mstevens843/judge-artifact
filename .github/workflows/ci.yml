@@ -70,7 +70,7 @@ jobs:
         run: uv run python -m judge_artifact.harness.arm_b_defense
       - name: Arm D - denominator policy
         run: uv run python -m judge_artifact.harness.arm_d
-      - name: Arm C - no-call readiness receipt
-        run: uv run python -m judge_artifact.harness.arm_c
+      - name: Arm C - no-call readiness smoke
+        run: uv run python -m judge_artifact.harness.arm_c --out /tmp/arm-c-readiness.json
       - name: evidence must match the committed receipts
         run: git diff --exit-code -- evidence/

@@ -6,14 +6,17 @@ grades across runs. The direct measurement runs the SAME borderline judge prompt
 specified temperature and reports per-item verdicts, flip rate, pooled ASR, confidence interval,
 and a receipt.
 
-The default command makes no model calls:
+The default command makes no model calls. Use --out when you want a readiness smoke that does not
+overwrite the committed evidence file:
 
-    uv run python -m judge_artifact.harness.arm_c
+    uv run python -m judge_artifact.harness.arm_c --out /tmp/arm-c-readiness.json
 
 Real temperature-controlled runs require an explicit provider, model, and paid-call opt-in, e.g.:
 
-    uv run --extra fidelity python -m judge_artifact.harness.arm_c \
-      --provider inspect --model openai/gpt-4.1-mini --temperature 1.0 --n 30 --allow-paid-api
+    ANTHROPIC_API_KEY=<key> ANTHROPIC_WORKSPACE_ID=<workspace-id> \
+      uv run --extra fidelity --with anthropic python -m judge_artifact.harness.arm_c \
+      --provider inspect --model anthropic/claude-haiku-4-5-20251001 \
+      --temperature 1.0 --n 30 --allow-paid-api
 
 The old local Claude CLI route is retained as ``--provider cli`` and labelled as a substrate smoke
 test because it does not expose temperature control.
@@ -85,6 +88,8 @@ class RunConfig:
     seed: int | None
     max_tokens: int
     allow_paid_api: bool
+    anthropic_workspace_id: str = ""
+    output_path: Path = EVIDENCE
 
 
 @dataclass(frozen=True)
@@ -206,11 +211,18 @@ def run_measurement(config: RunConfig, provider: JudgeProvider) -> dict[str, obj
     decided = [verdict for verdict in all_verdicts if verdict != "abstain"]
     yes = sum(1 for verdict in decided if verdict == "yes")
     lo, hi = wilson_interval(yes, len(decided))
+    extra_headers = _extra_headers(config) or {}
     return {
         "provider": provider.provider_id,
         "model": config.model or "session-default",
         "temperature": config.temperature,
         "seed": config.seed,
+        "generation_config": {
+            "temperature": config.temperature,
+            "seed": config.seed,
+            "max_tokens": config.max_tokens,
+            "extra_header_names": sorted(extra_headers),
+        },
         "n_per_item": config.n_per_item,
         "prompt_case_ids": [case.id for case in cases],
         "substrate": provider.substrate,
@@ -232,12 +244,18 @@ class InspectAIProvider:
         return asyncio.run(self._judge(case, config))
 
     async def _judge(self, case: JudgeCase, config: RunConfig) -> ProviderReply:
-        from inspect_ai.model import ChatMessageSystem, ChatMessageUser, GenerateConfig, get_model
+        from inspect_ai.model import (
+            ChatMessageSystem,
+            ChatMessageUser,
+            GenerateConfig,
+            get_model,
+        )
 
         generate_config = GenerateConfig(
             temperature=config.temperature,
             seed=config.seed,
             max_tokens=config.max_tokens,
+            extra_headers=_extra_headers(config),
         )
         model = get_model(config.model, config=generate_config)
         output = await model.generate(
@@ -313,16 +331,26 @@ def not_measured_record(
             "model": config.model,
             "temperature": config.temperature,
             "seed": config.seed,
+            "max_tokens": config.max_tokens,
             "n_per_item": config.n_per_item,
             "prompt_case_ids": sorted(BORDERLINE),
             "missing_env": missing_env or [],
+            "anthropic_workspace_id_present": bool(config.anthropic_workspace_id),
             "ready_command": (
-                "uv run --extra fidelity python -m judge_artifact.harness.arm_c "
-                "--provider inspect --model openai/gpt-4.1-mini --temperature 1.0 "
+                "ANTHROPIC_API_KEY=<key> ANTHROPIC_WORKSPACE_ID=<workspace-id> "
+                "uv run --extra fidelity --with anthropic python -m "
+                "judge_artifact.harness.arm_c --provider inspect "
+                "--model anthropic/claude-haiku-4-5-20251001 --temperature 1.0 "
                 f"--n {config.n_per_item} --allow-paid-api"
             ),
         },
     }
+
+
+def _extra_headers(config: RunConfig) -> dict[str, str] | None:
+    if model_provider_name(config.model) == "anthropic" and config.anthropic_workspace_id:
+        return {"anthropic-workspace-id": config.anthropic_workspace_id}
+    return None
 
 
 def _write_record(record: dict[str, object], out: Path) -> None:
@@ -344,6 +372,17 @@ def parse_args(argv: list[str] | None = None) -> RunConfig:
     ap.add_argument("--seed", type=int, default=None)
     ap.add_argument("--max-tokens", type=int, default=32)
     ap.add_argument(
+        "--out",
+        type=Path,
+        default=EVIDENCE,
+        help="evidence JSON path to write",
+    )
+    ap.add_argument(
+        "--anthropic-workspace-id",
+        default=os.environ.get("ANTHROPIC_WORKSPACE_ID", ""),
+        help="workspace id header required by some Anthropic identity-linked API keys",
+    )
+    ap.add_argument(
         "--allow-paid-api",
         action="store_true",
         help="required before making provider or CLI model calls",
@@ -357,6 +396,8 @@ def parse_args(argv: list[str] | None = None) -> RunConfig:
         seed=args.seed,
         max_tokens=args.max_tokens,
         allow_paid_api=args.allow_paid_api,
+        anthropic_workspace_id=args.anthropic_workspace_id,
+        output_path=args.out,
     )
 
 
@@ -364,9 +405,9 @@ def main(argv: list[str] | None = None) -> int:
     config = parse_args(argv)
     if config.provider == "none":
         record = not_measured_record(config, "no provider selected; no model calls made")
-        _write_record(record, EVIDENCE)
+        _write_record(record, config.output_path)
         print(json.dumps(record["analysis"], indent=2))
-        print(f"receipt: {record['receipt']}\nwrote {EVIDENCE}")
+        print(f"receipt: {record['receipt']}\nwrote {config.output_path}")
         return 0
 
     try:
@@ -378,9 +419,9 @@ def main(argv: list[str] | None = None) -> int:
                 "required provider credentials are missing; no model calls made",
                 missing_env=missing,
             )
-            _write_record(record, EVIDENCE)
+            _write_record(record, config.output_path)
             print(json.dumps(record["analysis"], indent=2))
-            print(f"receipt: {record['receipt']}\nwrote {EVIDENCE}")
+            print(f"receipt: {record['receipt']}\nwrote {config.output_path}")
             return 0
         result = run(config)
     except ConfigError as exc:
@@ -388,9 +429,9 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     record = {"arm": "C", "status": "measured", "analysis": result}
-    _write_record(record, EVIDENCE)
+    _write_record(record, config.output_path)
     print(json.dumps(result, indent=2))
-    print(f"receipt: {record['receipt']}\nwrote {EVIDENCE}")
+    print(f"receipt: {record['receipt']}\nwrote {config.output_path}")
     return 0
 
 

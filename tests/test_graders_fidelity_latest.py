@@ -64,7 +64,10 @@ def latest_fidelity_versions() -> None:
 
 
 def _inspect_messages(episode_id: str) -> list[Any]:
-    from inspect_ai.model import ChatMessageAssistant, ChatMessageTool
+    from inspect_ai.model import (
+        ChatMessageAssistant,
+        ChatMessageTool,
+    )
     from inspect_ai.tool import ToolCall, ToolCallError
 
     out: list[Any] = []
