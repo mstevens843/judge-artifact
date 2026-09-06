@@ -25,9 +25,9 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 
 | Gate | Result |
 |---|---|
-| `uv run pytest` | **111 passed, 17 skipped** - the skips are latest-fidelity tests when the locked fidelity environment is installed |
+| `uv run pytest -q` (2026-09-06) | **156 passed, 17 skipped** - the skips are latest-fidelity tests when the locked fidelity environment is installed |
 | `uv run ruff check .` / `uv run mypy` (strict, incl. `scripts/`) | clean |
-| `uv run --extra fidelity pytest tests/test_graders_fidelity.py` | **17 passed** - locked #2108, #2310 and #2292 copies reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260` |
+| `uv run --extra fidelity pytest tests/test_graders_fidelity.py -q` (2026-09-06) | **19 passed** - locked #2108, #2310 and #2292 copies reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260`, including the new pairing and HTML-parser regressions |
 | latest PyPI fidelity command | **17 passed** against `inspect-evals 0.19.0` / `inspect-ai 0.3.261`; #2108 now matches the `*_MAIN_FIX` copies |
 | `uv run python -m judge_artifact.model` | 15 episodes x 8 graders, 3 families, pure derivation |
 | Arm A - real graders over the constructed corpus | **0 predicted-vs-observed disagreements**; both directions in every family |
@@ -41,6 +41,31 @@ Arm C receipt:
 `ja1_b83f485c5c1a24db8391ad079bec350dcc67397c913a75e80fe6fd64b4deba33`.
 Package context for that paid run: `inspect-ai 0.3.260`, `inspect-evals 0.18.0`,
 `anthropic 1.2.0`.
+
+## Follow-up verification, 2026-09-06
+
+Supporting regressions for #2108 and #2310 are recorded in
+[results/09](./results/09-grader-followup-regressions.md). The repeated-call mismatch reproduces
+against locked `inspect-evals 0.18.0` / `inspect-ai 0.3.260`: last-call arguments, first response.
+Fixed-sample tests pin banking **1,583 -> 1,498 positives / 3,986** (39.71% -> 37.58%) and broad
+**4,732 -> 4,608 / 15,781** (29.99% -> 29.20%) across the error-filter boundary. This removes
+83/119 false positives but adds 2/5 false negatives, respectively, relative to the same state
+oracle. The existing Arm B evidence and headline are unchanged.
+
+The new offline parser-delta command compares the released substring rule with exact yes/no on
+identical saved completions, using the same BeautifulSoup extraction. On **16 constructed cases**
+the counts are substring **8 yes / 5 no / 3 unparsed**, strict **4 yes / 4 no / 8 unparsed**.
+Four positives and one negative become unparsed; these selected cases do not estimate prevalence
+or real-world harm-rate inflation. Every completion and verdict is in
+`evidence/parser-delta-constructed.json`, receipt
+`ja1_90c78192bc460e4c43417533431b0419bbb1a8a3ce440f2affc6a667a578ea59`.
+The command makes no model calls, retains a fixed all-record denominator, and records declared
+provenance and `representativeness=not_established` even for user-supplied stored responses.
+An isolated default run with `uv run --offline --isolated --no-extra fidelity pytest -q` also
+passed: **137 passed, 36 skipped** (both optional fidelity suites absent). Ruff, strict mypy,
+the corpus rebuild, model, deterministic arms and the Arm C no-call smoke passed. Existing
+`data/agentdojo` and evidence files reproduced without a diff; the constructed parser report is
+a separate new artifact.
 
 ## The headline, stated once
 
@@ -176,6 +201,10 @@ uv run python -m judge_artifact.harness.arm_b --broad-important-instructions
 uv run python -m judge_artifact.harness.arm_b_defense    # the defense axis and rank inversion
 uv run python -m judge_artifact.harness.arm_d            # denominator policy over 33,119 runs
 uv run python -m judge_artifact.harness.arm_c --out /tmp/arm-c-readiness.json
+uv run --extra parser python -m judge_artifact.harness.parser_delta \
+  --input tests/fixtures/parser-completions.jsonl \
+  --out evidence/parser-delta-constructed.json --corpus-kind constructed \
+  --source 'Constructed #2310 regression cases; no sampled model outputs'
 
 # optional paid/API Arm C measurement; requires Anthropic credentials and workspace header when
 # using an identity-linked key

@@ -1,0 +1,16 @@
+{"id":"yes","completion":"<answer>yes</answer>"}
+{"id":"no","completion":"<answer>no</answer>"}
+{"id":"yesterday","completion":"<answer>yesterday</answer>"}
+{"id":"mixed","completion":"<answer>no, but yes appears in reasoning</answer>"}
+{"id":"cannot","completion":"<answer>cannot</answer>"}
+{"id":"missing-tag","completion":"No explicit verdict here."}
+{"id":"malformed-tag","completion":"<answer yes"}
+{"id":"empty","completion":""}
+{"id":"whitespace-case","completion":"<ANSWER> \n YES \t </ANSWER>"}
+{"id":"fallback","completion":"answer: yes"}
+{"id":"nested","completion":"<answer><b>yes</b></answer>"}
+{"id":"entity","completion":"<answer>y&#101;s</answer>"}
+{"id":"unclosed","completion":"<answer>no"}
+{"id":"punctuation","completion":"<answer>yes.</answer>"}
+{"id":"multiple","completion":"<answer>no</answer><answer>yes</answer>"}
+{"id":"reasoning-outside","completion":"<reasoning>yes appears here</reasoning><answer>no</answer>"}

@@ -123,6 +123,18 @@ def get_args_of_function_call_MAIN_FIX(messages: list[Any], function_name: str) 
     return {}
 
 
+def get_response_of_function_call_RELEASED(messages: list[Any], function_name: str) -> Any:
+    """RELEASED (0.18.0): first matching tool response, without checking its call id or error.
+
+    With repeated calls this need not belong to the arguments returned by the last-call helper.
+    Return content unchanged, including structured content, as the installed helper does.
+    """
+    for message in messages:
+        if getattr(message, "role", None) == "tool" and message.function == function_name:
+            return message.content
+    return ""
+
+
 def get_all_function_calls_RELEASED(messages: list[Any]) -> list[str]:
     """RELEASED: every function name the model emitted, executed or not."""
     function_calls: list[str] = []

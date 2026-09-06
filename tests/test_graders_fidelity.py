@@ -5,8 +5,8 @@ be able to check, so when the optional `fidelity` extra is installed these tests
 functions and the installed `inspect_evals` functions over the same corpus and require the same
 answer, for all three vendored modules:
 
-  #2108  `is_function_called` / `times_function_called` / `get_args_of_function_call`, over real
-         `inspect_ai` ChatMessage objects built from each execution episode.
+  #2108  counting, argument and response helpers over real `inspect_ai` ChatMessage objects,
+         including a repeated-call pairing regression.
   #2310  `parse_grader_response`, over each substring episode's answer string.
   #2292  `BlackmailClassifier.classify`, over each gate episode's response and judge verdict.
 
@@ -20,6 +20,7 @@ fidelity was never checked. Install with `uv sync --extra fidelity`.
 from __future__ import annotations
 
 from importlib import metadata
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -27,6 +28,7 @@ import pytest
 from judge_artifact.corpus.episodes import CORPUS
 from judge_artifact.graders.vendored.agentharm_2108 import (
     get_args_of_function_call_RELEASED,
+    get_response_of_function_call_RELEASED,
     is_function_called_RELEASED,
     times_function_called_RELEASED,
 )
@@ -39,6 +41,8 @@ from judge_artifact.graders.vendored.agentic_misalignment_2310 import (
 )
 from judge_artifact.model.defects import DEFECTS
 from judge_artifact.model.layers import Family
+from judge_artifact.transcript import Episode
+from tests.regression_cases import PAIRING_EPISODE
 
 EXECUTION_IDS = tuple(d.id for d in DEFECTS if d.family is Family.EXECUTION)
 SUBSTRING_IDS = tuple(d.id for d in DEFECTS if d.family is Family.SUBSTRING)
@@ -61,7 +65,7 @@ def test_locked_fidelity_package_versions_match_the_documented_environment() -> 
     assert _installed_version("inspect-ai") == EXPECTED_INSPECT_AI
 
 
-def _inspect_messages(episode_id: str) -> list[Any]:
+def _inspect_messages(episode: Episode) -> list[Any]:
     """Build the real inspect_ai ChatMessage list the shipped AgentHarm helpers expect."""
     from inspect_ai.model import (
         ChatMessageAssistant,
@@ -70,7 +74,7 @@ def _inspect_messages(episode_id: str) -> list[Any]:
     from inspect_ai.tool import ToolCall, ToolCallError
 
     out: list[Any] = []
-    for event in CORPUS[episode_id].tool_events:
+    for event in episode.tool_events:
         out.append(
             ChatMessageAssistant(
                 content="",
@@ -81,7 +85,7 @@ def _inspect_messages(episode_id: str) -> list[Any]:
         )
         out.append(
             ChatMessageTool(
-                content="",
+                content=event.response_text,
                 tool_call_id=event.call_id,
                 function=event.name,
                 error=ToolCallError("unknown", "tool call failed") if event.errored else None,
@@ -93,7 +97,7 @@ def _inspect_messages(episode_id: str) -> list[Any]:
 @pytest.mark.parametrize("episode_id", EXECUTION_IDS)
 def test_vendored_2108_matches_the_installed_agentharm_helpers(episode_id: str) -> None:
     gu = pytest.importorskip("inspect_evals.agentharm.benchmark.grading_utils", reason=_SKIP)
-    messages = _inspect_messages(episode_id)
+    messages = _inspect_messages(CORPUS[episode_id])
     target = CORPUS[episode_id].target_function
     assert is_function_called_RELEASED(messages, target) == gu.is_function_called(messages, target)
     assert times_function_called_RELEASED(messages, target) == gu.times_function_called(
@@ -102,6 +106,39 @@ def test_vendored_2108_matches_the_installed_agentharm_helpers(episode_id: str) 
     assert get_args_of_function_call_RELEASED(messages, target) == gu.get_args_of_function_call(
         messages, target
     )
+    assert get_response_of_function_call_RELEASED(messages, target) == (
+        gu.get_response_of_function_call(messages, target)
+    )
+
+
+def test_installed_2108_pairs_last_arguments_with_first_response() -> None:
+    gu = pytest.importorskip("inspect_evals.agentharm.benchmark.grading_utils", reason=_SKIP)
+    messages = _inspect_messages(PAIRING_EPISODE)
+    first, second = PAIRING_EPISODE.tool_events
+    target = PAIRING_EPISODE.target_function
+    assert gu.get_args_of_function_call(messages, target) == second.args
+    assert gu.get_response_of_function_call(messages, target) == first.response_text
+    assert get_args_of_function_call_RELEASED(messages, target) == second.args
+    assert get_response_of_function_call_RELEASED(messages, target) == first.response_text
+
+
+def test_html_substring_rule_matches_installed_parser_on_stored_regressions() -> None:
+    mod = pytest.importorskip(
+        "inspect_evals.agentic_misalignment.classifiers.blackmail_classifier", reason=_SKIP
+    )
+    from judge_artifact.graders.parser_rules import parse_substring
+    from judge_artifact.harness.parser_delta import load_completions
+
+    records = load_completions(Path(__file__).parent / "fixtures" / "parser-completions.jsonl")
+    real = mod.BlackmailClassifier()
+    for record in records:
+        try:
+            expected = real.parse_grader_response(record.completion)[0]
+        except ValueError:
+            with pytest.raises(ValueError):
+                parse_substring(record.completion)
+        else:
+            assert parse_substring(record.completion) is expected, record.id
 
 
 def test_the_released_package_does_not_contain_the_2108_fix() -> None:

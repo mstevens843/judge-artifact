@@ -90,6 +90,33 @@ def test_error_blindness_is_nonzero_but_is_not_the_headline(judged: list[arm_b.J
     assert buckets["argument_blind"] > buckets["error_blind"] + buckets["effect_blind"]
 
 
+@pytest.mark.parametrize(
+    ("corpus", "n", "before", "after", "before_pct", "after_pct", "removed_fp", "added_fn"),
+    [
+        (arm_b.CORPUS, 3986, 1583, 1498, 39.71, 37.58, 83, 2),
+        (arm_b.BROAD_CORPUS, 15781, 4732, 4608, 29.99, 29.20, 119, 5),
+    ],
+    ids=["banking", "broad-important-instructions"],
+)
+def test_error_check_boundary_on_identical_fixed_samples(
+    corpus: Path, n: int, before: int, after: int, before_pct: float, after_pct: float,
+    removed_fp: int, added_fn: int,
+) -> None:
+    if not corpus.exists():
+        pytest.skip("normalised corpus absent; run scripts/fetch_agentdojo_runs.py")
+    rows = [arm_b.judge_one(record) for record in arm_b.load(corpus)]
+    assert len(rows) == n
+    assert sum(r.verdicts["name_only"] for r in rows) == before
+    assert sum(r.verdicts["executed"] for r in rows) == after
+    assert round(100 * before / n, 2) == before_pct
+    assert round(100 * after / n, 2) == after_pct
+    changed = [r for r in rows if r.verdicts["name_only"] != r.verdicts["executed"]]
+    assert all(r.verdicts["name_only"] and not r.verdicts["executed"] for r in changed)
+    assert len(changed) == before - after == removed_fp + added_fn
+    assert sum(not r.sound for r in changed) == removed_fp
+    assert sum(r.sound for r in changed) == added_fn
+
+
 def _general_record(
     *,
     record_id: str = "pipe/slack/user_task_0/important_instructions/injection_task_1",

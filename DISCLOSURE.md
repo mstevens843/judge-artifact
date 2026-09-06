@@ -112,6 +112,14 @@ rule, but it finds the same qualitative mechanism: name-only reports +9.69 pp ov
 and 73.8% of its over-credit is argument-blind. Tasks whose AgentDojo `ground_truth` has no
 statically matchable target call are explicitly excluded in `data/agentdojo/MANIFEST.json`.
 
+Follow-up verified 2026-09-06: the same-sample error-filter boundary is pinned at
+39.71% -> 37.58% (banking) and 29.99% -> 29.20% (broader important_instructions). The 85/124
+removed credits include 2/5 oracle-positive runs, respectively. A minimal two-call regression
+also reproduces the locked 0.18.0 argument/response mismatch: last-call arguments are returned
+alongside the first response. See [results/09](./results/09-grader-followup-regressions.md) for
+the commands, exact counts and tests. These are supporting results for the existing grader-shape
+comparison, not a new end-to-end AgentHarm measurement.
+
 ### 2. The over-correction that reopened #2108 is real, and fires on released data
 
 Two runs in this corpus have the shape the maintainer was worried about - the target call errored,
@@ -200,6 +208,16 @@ ANTHROPIC_API_KEY=<key> ANTHROPIC_WORKSPACE_ID=<workspace-id> \
   --provider inspect --model anthropic/claude-haiku-4-5-20251001 \
   --temperature 1.0 --n 30 --allow-paid-api
 ```
+
+## #2310 follow-up: offline parser-delta harness
+
+Verified 2026-09-06: the repo can now compare the shipped substring rule with strict exact yes/no
+on identical stored grader completions, using upstream's HTML extraction. The output retains
+unparsed answers, all row-level verdicts, raw completions, input hashes and a receipt. The
+substring rule is fidelity-checked against installed `inspect-evals 0.18.0` on the new fixtures.
+The committed run is **16 constructed regressions**, not a representative model-response set;
+it supports parser behavior only. We have no prevalence estimate to offer. Commands and the
+format/denominator limits are in [results/09](./results/09-grader-followup-regressions.md).
 
 ## What we are offering
 

@@ -12,9 +12,11 @@ dependencies = []
 # Only for the LLM-judge arm (Arm C) and the grader fidelity test. The model core and the
 # deterministic arms have zero third-party dependencies, exactly as tests/test_contract.py asserts.
 fidelity = ["inspect-ai>=0.3", "inspect-evals"]
+# Offline stored-completion parsing uses the same HTML extractor as upstream. Already in uv.lock.
+parser = ["beautifulsoup4==4.15.0"]
 
 [dependency-groups]
-dev = ["pytest>=8.3", "ruff>=0.6", "mypy>=1.11"]
+dev = ["pytest>=8.3", "ruff>=0.6", "mypy>=1.11", "beautifulsoup4==4.15.0"]
 
 [build-system]
 requires = ["hatchling"]

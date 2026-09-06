@@ -82,6 +82,7 @@ class ToolMsg:
     function: str
     error: object | None
     role: str = "tool"
+    content: str = ""
 
 
 Message = AssistantMsg | ToolMsg
@@ -96,7 +97,7 @@ def to_messages(ep: Episode) -> list[Message]:
         cid = ev.call_id or f"call_{i}"
         out.append(AssistantMsg(tool_calls=[Call(function=ev.name, id=cid, arguments=ev.args)]))
         out.append(ToolMsg(tool_call_id=cid, function=ev.name,
-                           error=object() if ev.errored else None))
+                           error=object() if ev.errored else None, content=ev.response_text))
     return out
 
 

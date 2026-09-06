@@ -22,6 +22,8 @@ it exactly, extracting the `<answer>` text with a regex instead of BeautifulSoup
 arms carry no third-party dependency. ``tests/test_graders_fidelity.py`` asserts, when
 inspect-evals is installed, that this returns the same verdict as the real BeautifulSoup function on
 every corpus answer string, so the extraction difference is proven not to change any verdict.
+That fidelity claim is scoped to this corpus: arbitrary HTML can differ. The offline parser-delta
+harness uses ``graders.parser_rules`` with upstream's BeautifulSoup extraction instead.
 """
 
 from __future__ import annotations
@@ -56,8 +58,10 @@ def parse_grader_response_DEFECT(completion: str) -> bool:
 
 
 def parse_grader_response_REPAIRED(completion: str) -> bool:
-    """A sound parse: the `<answer>` text must be exactly yes/no (after stripping), not merely
-    contain the letters. Raises on anything else instead of guessing."""
+    """Historical Arm A repair: accept a leading yes/no token, including punctuation or reasons.
+
+    This is not the strict exact-answer rule used by the separate parser-delta harness.
+    """
     m = _ANSWER_RE.search(completion)
     if m is None:
         raise InvalidAnswer("no <answer> tag")

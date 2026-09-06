@@ -69,6 +69,12 @@ to **0.95**.
   `tests/test_graders_fidelity_latest.py`, was checked on 2026-09-01 against
   `inspect-evals 0.19.0` / `inspect-ai 0.3.261`; there the AgentHarm helpers match the
   `*_MAIN_FIX` copies because latest now ships the #2108 rejection filter.
+- **Follow-up regressions for #2108 and #2310.** A repeated-call test confirms that the locked
+  AgentHarm helpers pair last-call arguments with the first response. The offline
+  `judge_artifact.harness.parser_delta` command compares substring and strict exact yes/no rules
+  on saved completions, retaining unparsed rows and a receipted ledger. Its committed run uses
+  16 constructed cases, not a prevalence sample; commands and limits are in
+  [results/09](./results/09-grader-followup-regressions.md).
 - **Arm A, both directions, deterministic.** `uv run python -m judge_artifact.harness.arm_a` runs
   the real graders over a constructed corpus and matches the prediction on every cell. The
   execution family is a ladder - name only, name + no error, name + attacker's arguments, state -
@@ -108,7 +114,7 @@ src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), ar
 scripts/fetch_agentdojo_runs.py  the committed corpus producer: pinned commit, hashed outputs
 data/agentdojo/                  normalised corpora + MANIFEST.json (MIT, hashed)
 evidence/                        receipted artifacts, incl. banking and broad Arm B ledgers
-results/                         numbered, append-only lab notebook (00 substrate .. 08 broad Arm B)
+results/                         numbered, append-only lab notebook (00 substrate .. 09 regressions)
 ```
 
 ## What it does not do
