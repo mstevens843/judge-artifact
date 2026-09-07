@@ -4,6 +4,8 @@ Input is UTF-8 JSONL with unique nonempty string `id` and string `completion` fi
 completions are retained as unparsed. Other fields are ignored but covered by the input byte hash.
 The receipted output embeds every completion and verdict, plus counts on a fixed denominator.
 Corpus provenance is required; even stored model outputs do not establish representativeness.
+Use --compare-pr-2311 for a three-rule report split by HTML parse path. Without it, the original
+two-rule v1 report remains byte-for-byte reproducible.
 """
 
 from __future__ import annotations
@@ -18,10 +20,12 @@ from pathlib import Path
 from typing import Any
 
 from ..canonical import receipt, sha256_hex
-from ..graders.parser_rules import parse_strict_exact, parse_substring
+from ..graders.parser_rules import parse_path, parse_strict_exact, parse_substring
 from ..graders.vendored.agentic_misalignment_2310 import InvalidAnswer
 
 VERDICTS = ("yes", "no", "unparsed")
+PARSE_PATHS = ("tag_present", "tag_absent")
+PATH_REPORT_RULES = ("substring", "pr_2311", "strict_exact")
 
 
 @dataclass(frozen=True)
@@ -75,13 +79,86 @@ def _summary(verdicts: list[str]) -> dict[str, Any]:
         "counts": counts,
         "n_total": n,
         "n_parsed": parsed,
-        "yes_fraction_all": round(counts["yes"] / n, 8),
-        "unparsed_fraction_all": round(counts["unparsed"] / n, 8),
+        "yes_fraction_all": round(counts["yes"] / n, 8) if n else None,
+        "unparsed_fraction_all": round(counts["unparsed"] / n, 8) if n else None,
         "yes_fraction_parsed": round(counts["yes"] / parsed, 8) if parsed else None,
     }
 
 
-def build_report(input_path: Path, *, corpus_kind: str, source: str) -> dict[str, Any]:
+def _comparison(ledger: list[dict[str, Any]], before: str, after: str) -> dict[str, Any]:
+    transitions = {old: dict.fromkeys(VERDICTS, 0) for old in VERDICTS}
+    for row in ledger:
+        transitions[row[f"{before}_verdict"]][row[f"{after}_verdict"]] += 1
+    delta = sum(row[f"{after}_verdict"] == "yes" for row in ledger) - sum(
+        row[f"{before}_verdict"] == "yes" for row in ledger
+    )
+    n = len(ledger)
+    return {
+        "n_total": n,
+        "transitions": transitions,
+        "delta_yes_count_after_minus_before": delta,
+        "delta_yes_fraction_all": round(delta / n, 8) if n else None,
+        "delta_yes_percentage_points_all": round(100 * delta / n, 6) if n else None,
+    }
+
+
+def _path_analysis(ledger: list[dict[str, Any]]) -> dict[str, Any]:
+    return {
+        "n_total": len(ledger),
+        "rules": {
+            name: _summary([row[f"{name}_verdict"] for row in ledger])
+            for name in PATH_REPORT_RULES
+        },
+        "comparisons": {
+            f"{before}_to_{after}": _comparison(ledger, before, after)
+            for before, after in (
+                ("substring", "pr_2311"), ("substring", "strict_exact"),
+                ("pr_2311", "strict_exact"),
+            )
+        },
+    }
+
+
+def _add_pr_comparison(report: dict[str, Any]) -> None:
+    from ..graders.vendored.agentic_misalignment_2311 import (
+        PR2311_REVISION,
+        PR2311_SOURCE_ROOT,
+        PR2311_SOURCE_SHA256,
+        parse_grader_response_PR2311,
+    )
+
+    ledger = report["individual_completions"]
+    for row in ledger:
+        row["parse_path"] = parse_path(row["completion"])
+        row["pr_2311_verdict"], row["pr_2311_error"] = _verdict(
+            parse_grader_response_PR2311, row["completion"]
+        )
+    report["schema"] = "parser-delta-paths-v2"
+    report["classifier_scope"] = "BlackmailClassifier.parse_grader_response only"
+    report["parsers"]["pr_2311"] = {
+        "rule": "first token with punctuation stripped; first answer-marker fallback",
+        "repository": "UKGovernmentBEIS/inspect_evals",
+        "commit": PR2311_REVISION,
+        "source_sha256": {
+            f"{PR2311_SOURCE_ROOT}/{name}": digest
+            for name, digest in sorted(PR2311_SOURCE_SHA256.items())
+        },
+    }
+    report["analysis"] = {
+        "denominator": "all records within each scope; unparsed remains a separate verdict",
+        "parse_path_definition": "first BeautifulSoup answer element exists, including empty tags",
+        "failure_policy": "parser ValueError recorded as unparsed; no classify gates or scorer run",
+        "overall": _path_analysis(ledger),
+        "by_parse_path": {
+            path: _path_analysis([row for row in ledger if row["parse_path"] == path])
+            for path in PARSE_PATHS
+        },
+    }
+
+
+def build_report(
+    input_path: Path, *, corpus_kind: str, source: str, compare_pr_2311: bool = False,
+) -> dict[str, Any]:
     if corpus_kind not in {"constructed", "stored"}:
         raise ValueError("corpus_kind must be constructed or stored")
     if not source.strip():
@@ -134,6 +211,8 @@ def build_report(input_path: Path, *, corpus_kind: str, source: str) -> dict[str
         },
         "individual_completions": ledger,
     }
+    if compare_pr_2311:
+        _add_pr_comparison(report)
     report["receipt"] = receipt(report)
     return report
 
@@ -144,20 +223,34 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--corpus-kind", choices=("constructed", "stored"), required=True)
     parser.add_argument("--source", required=True, help="provenance and selection of the input set")
+    parser.add_argument(
+        "--compare-pr-2311", action="store_true",
+        help="compare the pinned blackmail PR parser and split results by HTML parse path",
+    )
     args = parser.parse_args(argv)
     try:
         if args.input.resolve() == args.out.resolve() or (
             args.out.exists() and args.input.samefile(args.out)
         ):
             raise ValueError("output must not overwrite the input corpus")
-        report = build_report(args.input, corpus_kind=args.corpus_kind, source=args.source)
+        report = build_report(
+            args.input, corpus_kind=args.corpus_kind, source=args.source,
+            compare_pr_2311=args.compare_pr_2311,
+        )
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     print(f"{args.corpus_kind} corpus: {report['corpus']['n']} completions")
-    for name in ("substring", "strict_exact"):
-        print(f"{name}: {report['analysis'][name]['counts']}")
+    if args.compare_pr_2311:
+        analysis = report["analysis"]
+        for scope, cell in {"overall": analysis["overall"], **analysis["by_parse_path"]}.items():
+            print(f"{scope}: n={cell['n_total']}")
+            for name in PATH_REPORT_RULES:
+                print(f"  {name}: {cell['rules'][name]['counts']}")
+    else:
+        for name in ("substring", "strict_exact"):
+            print(f"{name}: {report['analysis'][name]['counts']}")
     print(f"receipt: {report['receipt']}\nwrote {args.out}")
     return 0
 

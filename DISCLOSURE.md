@@ -219,6 +219,16 @@ The committed run is **16 constructed regressions**, not a representative model-
 it supports parser behavior only. We have no prevalence estimate to offer. Commands and the
 format/denominator limits are in [results/09](./results/09-grader-followup-regressions.md).
 
+Follow-up verified 2026-09-07: a separate optional comparison now reports tag-present and
+tag-absent counts for the released blackmail parser, the PR parser pinned at
+`4698d4b68dfa88bdaf849e591f3a46d6151219a2`, and strict exact parsing. The pinned PR **does modify
+the fallback**, but it still accepts `the answer: yes reading is tempting here, but no` as yes
+because it searches for a marker throughout the completion. This reproduces against the
+upstream parser definitions preserved in hashed source snapshots. The prompt already specifies
+the format contract. The new 32-case corpus is constructed regression evidence, with no
+prevalence claim or full-scorer measurement. Source pins, per-path counts and the new receipt
+are in [results/10](./results/10-parser-paths-and-pr2311.md).
+
 ## What we are offering
 
 - **The reproduction.** `uv run` from a clean checkout: the both-direction constructed corpus, the

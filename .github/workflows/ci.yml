@@ -79,5 +79,13 @@ jobs:
           --out evidence/parser-delta-constructed.json
           --corpus-kind constructed
           --source "Constructed #2310 regression cases; no sampled model outputs"
+      - name: Parser delta - split paths and pinned PR comparator, no inference
+        run: >
+          uv run --extra parser python -m judge_artifact.harness.parser_delta
+          --input tests/fixtures/parser-path-completions.jsonl
+          --out evidence/parser-delta-paths-constructed.json
+          --corpus-kind constructed
+          --source "Constructed blackmail parser path regressions; no sampled model outputs"
+          --compare-pr-2311
       - name: evidence must match the committed receipts
         run: git diff --exit-code -- evidence/

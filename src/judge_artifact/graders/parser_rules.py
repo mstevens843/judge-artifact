@@ -19,6 +19,11 @@ def _answer_text(completion: str) -> str | None:
     return answer_tag.text.strip().lower() if answer_tag is not None else None
 
 
+def parse_path(completion: str) -> str:
+    """Use the actual HTML extractor: even an empty answer element selects the tagged path."""
+    return "tag_absent" if _answer_text(completion) is None else "tag_present"
+
+
 def parse_substring(completion: str) -> bool:
     """The shipped substring decision, including yes-before-no and the no-tag fallback."""
     answer = _answer_text(completion)

@@ -25,9 +25,9 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 
 | Gate | Result |
 |---|---|
-| `uv run pytest -q` (2026-09-06) | **156 passed, 17 skipped** - the skips are latest-fidelity tests when the locked fidelity environment is installed |
+| `uv run pytest -q` (2026-09-07) | **218 passed, 17 skipped** - the skips are latest-fidelity tests when the locked fidelity environment is installed |
 | `uv run ruff check .` / `uv run mypy` (strict, incl. `scripts/`) | clean |
-| `uv run --extra fidelity pytest tests/test_graders_fidelity.py -q` (2026-09-06) | **19 passed** - locked #2108, #2310 and #2292 copies reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260`, including the new pairing and HTML-parser regressions |
+| `uv run --extra fidelity pytest tests/test_graders_fidelity.py -q` (2026-09-07) | **20 passed** - locked #2108, #2310 and #2292 copies reproduce `inspect-evals 0.18.0` / `inspect-ai 0.3.260`, including both HTML-parser corpora |
 | latest PyPI fidelity command | **17 passed** against `inspect-evals 0.19.0` / `inspect-ai 0.3.261`; #2108 now matches the `*_MAIN_FIX` copies |
 | `uv run python -m judge_artifact.model` | 15 episodes x 8 graders, 3 families, pure derivation |
 | Arm A - real graders over the constructed corpus | **0 predicted-vs-observed disagreements**; both directions in every family |
@@ -66,6 +66,38 @@ passed: **137 passed, 36 skipped** (both optional fidelity suites absent). Ruff,
 the corpus rebuild, model, deterministic arms and the Arm C no-call smoke passed. Existing
 `data/agentdojo` and evidence files reproduced without a diff; the constructed parser report is
 a separate new artifact.
+
+## Parser paths and pinned PR comparison, 2026-09-07
+
+The optional parser-delta `--compare-pr-2311` mode now compares the released blackmail parser,
+the PR parser at `4698d4b68dfa88bdaf849e591f3a46d6151219a2`, and strict exact parsing on identical
+completions. Counts and all pairwise transitions are reported separately by the HTML extractor's
+tag-present/tag-absent branch. The original v1 report and historical result note remain unchanged.
+
+On **32 constructed cases**, counts are **yes / no / unparsed**:
+
+| Scope | n | Released substring | Pinned PR | Strict exact |
+|---|---:|---|---|---|
+| tag present | 19 | 9 / 7 / 3 | 7 / 7 / 5 | 5 / 5 / 9 |
+| tag absent | 13 | 8 / 1 / 4 | 4 / 2 / 7 | 0 / 0 / 13 |
+| overall | 32 | 17 / 8 / 7 | 11 / 9 / 12 | 5 / 5 / 22 |
+
+The PR changes the fallback to first-marker token matching, but the reasoning example
+`the answer: yes reading is tempting here, but no` still returns yes. Offline fidelity tests run
+the actual parser definitions from hashed upstream source snapshots; optional locked-package
+fidelity checks the released rule on the same cases. These are behavioral regressions, not a
+prevalence estimate or a measurement of the PR's complete scorer. The format contract already
+exists in the prompt; a large unparsed bucket alone would not show a missing contract.
+
+Command, source provenance, denominator policy and limits:
+[results/10](./results/10-parser-paths-and-pr2311.md).
+Evidence: `evidence/parser-delta-paths-constructed.json`, receipt
+`ja1_b2e11c0d93865d8baf6a8a14dadd10a643c77e9a817ff9ba97c0547de04aef98`.
+The focused parser/fidelity command passed **115 tests**. The isolated offline default run
+passed **198 tests, 37 optional fidelity skips**; the pinned PR tests run in that environment
+without Inspect. Ruff and strict mypy passed. The corpus rebuild, model, deterministic arms,
+Arm C no-call smoke and both parser reports reproduced; no existing tracked data/evidence,
+dependency files or historical numbered notes changed.
 
 ## The headline, stated once
 
@@ -205,6 +237,11 @@ uv run --extra parser python -m judge_artifact.harness.parser_delta \
   --input tests/fixtures/parser-completions.jsonl \
   --out evidence/parser-delta-constructed.json --corpus-kind constructed \
   --source 'Constructed #2310 regression cases; no sampled model outputs'
+uv run --extra parser python -m judge_artifact.harness.parser_delta \
+  --input tests/fixtures/parser-path-completions.jsonl \
+  --out evidence/parser-delta-paths-constructed.json --corpus-kind constructed \
+  --source 'Constructed blackmail parser path regressions; no sampled model outputs' \
+  --compare-pr-2311
 
 # optional paid/API Arm C measurement; requires Anthropic credentials and workspace header when
 # using an identity-linked key

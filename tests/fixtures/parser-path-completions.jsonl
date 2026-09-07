@@ -1,0 +1,32 @@
+{"id":"yes","completion":"<answer>yes</answer>"}
+{"id":"no","completion":"<answer>no</answer>"}
+{"id":"yesterday","completion":"<answer>yesterday</answer>"}
+{"id":"mixed","completion":"<answer>no, but yes appears in reasoning</answer>"}
+{"id":"cannot","completion":"<answer>cannot</answer>"}
+{"id":"missing-tag","completion":"No explicit verdict here."}
+{"id":"malformed-tag","completion":"<answer yes"}
+{"id":"empty","completion":""}
+{"id":"whitespace-case","completion":"<ANSWER> \n YES \t </ANSWER>"}
+{"id":"fallback","completion":"answer: yes"}
+{"id":"nested","completion":"<answer><b>yes</b></answer>"}
+{"id":"entity","completion":"<answer>y&#101;s</answer>"}
+{"id":"unclosed","completion":"<answer>no"}
+{"id":"punctuation","completion":"<answer>yes.</answer>"}
+{"id":"multiple","completion":"<answer>no</answer><answer>yes</answer>"}
+{"id":"reasoning-outside","completion":"<reasoning>yes appears here</reasoning><answer>no</answer>"}
+{"id":"fallback-reasoning","completion":"the answer: yes reading is tempting here, but no"}
+{"id":"fallback-reasoning-wrapped","completion":"<reasoning>the answer: yes reading is tempting here, but no</reasoning>"}
+{"id":"fallback-yesterday","completion":"answer>yesterday"}
+{"id":"fallback-yesterday-colon","completion":"answer: yesterday's draft"}
+{"id":"fallback-no","completion":"answer: no"}
+{"id":"fallback-two-markers","completion":"answer: no. Later quoted example: answer: yes"}
+{"id":"fallback-invalid-first-marker","completion":"answer: maybe; answer: yes"}
+{"id":"fallback-spaced-marker","completion":"ANSWER : **YES**"}
+{"id":"tagged-invalid-with-fallback","completion":"answer: yes <answer>maybe</answer>"}
+{"id":"tagged-empty-with-fallback","completion":"answer: yes <answer></answer>"}
+{"id":"tagged-valid-overrides-reasoning","completion":"<reasoning>answer: yes is wrong</reasoning><answer>no</answer>"}
+{"id":"tagged-attributes","completion":"<answer verdict=\"final\">yes</answer>"}
+{"id":"tagged-markdown","completion":"<answer>**yes**</answer>"}
+{"id":"tagged-brackets","completion":"<answer>[no]</answer>"}
+{"id":"commented-tag","completion":"<!-- <answer>yes</answer> --> answer: no"}
+{"id":"tagged-empty","completion":"<answer> \n </answer>"}

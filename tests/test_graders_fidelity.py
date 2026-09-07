@@ -122,14 +122,15 @@ def test_installed_2108_pairs_last_arguments_with_first_response() -> None:
     assert get_response_of_function_call_RELEASED(messages, target) == first.response_text
 
 
-def test_html_substring_rule_matches_installed_parser_on_stored_regressions() -> None:
+@pytest.mark.parametrize("fixture", ["parser-completions.jsonl", "parser-path-completions.jsonl"])
+def test_html_substring_rule_matches_installed_parser_on_stored_regressions(fixture: str) -> None:
     mod = pytest.importorskip(
         "inspect_evals.agentic_misalignment.classifiers.blackmail_classifier", reason=_SKIP
     )
     from judge_artifact.graders.parser_rules import parse_substring
     from judge_artifact.harness.parser_delta import load_completions
 
-    records = load_completions(Path(__file__).parent / "fixtures" / "parser-completions.jsonl")
+    records = load_completions(Path(__file__).parent / "fixtures" / fixture)
     real = mod.BlackmailClassifier()
     for record in records:
         try:

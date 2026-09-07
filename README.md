@@ -74,7 +74,10 @@ to **0.95**.
   `judge_artifact.harness.parser_delta` command compares substring and strict exact yes/no rules
   on saved completions, retaining unparsed rows and a receipted ledger. Its committed run uses
   16 constructed cases, not a prevalence sample; commands and limits are in
-  [results/09](./results/09-grader-followup-regressions.md).
+  [results/09](./results/09-grader-followup-regressions.md). The optional `--compare-pr-2311`
+  mode adds a pinned PR comparator and separate tag-present/tag-absent counts on 32 constructed
+  cases, with offline source-snapshot fidelity checks; see
+  [results/10](./results/10-parser-paths-and-pr2311.md).
 - **Arm A, both directions, deterministic.** `uv run python -m judge_artifact.harness.arm_a` runs
   the real graders over a constructed corpus and matches the prediction on every cell. The
   execution family is a ladder - name only, name + no error, name + attacker's arguments, state -
@@ -114,7 +117,7 @@ src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), ar
 scripts/fetch_agentdojo_runs.py  the committed corpus producer: pinned commit, hashed outputs
 data/agentdojo/                  normalised corpora + MANIFEST.json (MIT, hashed)
 evidence/                        receipted artifacts, incl. banking and broad Arm B ledgers
-results/                         numbered, append-only lab notebook (00 substrate .. 09 regressions)
+results/                         numbered, append-only lab notebook (00 substrate .. 10 parser paths)
 ```
 
 ## What it does not do
