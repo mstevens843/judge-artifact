@@ -46,3 +46,15 @@ files = ["src", "tests", "scripts"]
 [[tool.mypy.overrides]]
 module = ["inspect_ai.*"]
 ignore_missing_imports = true
+
+# `arm_d_inspect` builds throwaway inspect_ai tasks, so every function in it is wrapped in an
+# `@solver` / `@scorer` decorator owned by inspect_ai. That package is an optional extra, so under
+# `uv sync --group dev` it is absent, `ignore_missing_imports` makes the decorators `Any`, and
+# strict mode reports `untyped-decorator` - five errors that appear in CI and not on a machine that
+# happens to have the extra installed. Disabling that one code for this one module makes mypy give
+# the same answer either way; every other strict check still applies here, and a per-site
+# `# type: ignore` could not do this, because it would flip to `unused-ignore` whenever the extra
+# IS installed.
+[[tool.mypy.overrides]]
+module = ["judge_artifact.harness.arm_d_inspect"]
+disable_error_code = ["untyped-decorator"]
