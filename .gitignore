@@ -5,3 +5,5 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 work/
+# inspect_ai writes eval logs to ./logs when a caller omits log_dir
+logs/

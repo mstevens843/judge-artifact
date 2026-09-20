@@ -166,13 +166,40 @@ marginally better.
 If defense evaluations are scored by an execution grader that does not read arguments, the class of
 defense being penalised is the class that works without blocking.
 
-### 4. #4286 - the denominator, measured where the policy is source-verifiable
+### 4. #4286 - the denominator, measured on Inspect and on AgentDojo
 
-We could not measure Inspect's own metric path end to end, so we did not claim to. Instead we
-measured the same policy defect on AgentDojo's released corpus, where the policy is one branch in
-`benchmark.py` (lines 129-130, 138-139, 146-147): a run that raises `context_length_exceeded` or a
-server error is written `utility = False, security = True` - a crash is published as an attack
-success and stays in the denominator, the opposite direction to the drop #4286 describes.
+We now measure this on both sides, and report them separately.
+
+**On Inspect.** The four reproductions in the issue body need only a passthrough solver and
+`mockllm/model`, so we re-ran them against `inspect-ai 0.3.266` (and, for contrast, the locked
+`0.3.260`). Item 4 is fixed - `mean()` routes through `value_to_float()` and no longer raises on
+the framework's own `C`/`I`/`P` labels. Items 1 and 2 still move the headline (`accuracy=1.0` with
+five of ten samples errored; `0.6` rather than `0.3` with five abstentions) but the loss is now
+visible, through `total_samples` vs `completed_samples` for errors and `scored_samples` /
+`unscored_samples` for abstentions. **Item 3 reproduces exactly as filed:** `[8, 5, 10]` gives
+`accuracy 7.67`, and `[1.0, 0.0, inf]` gives `accuracy inf` - and because `inf` is not `NaN` it
+passes the unscored filter and is counted as a *scored* sample. We note PR #4928 (merged
+2026-08-31) closed the adjacent custom-numeric-sentinel route through `value_to_float()`; the
+rubric-scale and non-finite cases above are untouched by it. We could find no open PR covering
+them, and no documented decision that custom numeric scorers must supply their own metric.
+
+One boundary worth stating: this is five probes matched to one issue, not a survey of the metric
+layer, and `--fail-on-error` / `--score-on-error` bound item 1 for a user who sets them. We
+measured the default path.
+
+We also note, for the design discussion on placement, that `Score.reason` is already a typed field
+rather than a metadata key: PR #4629, "First-class Score.reason and normalized scorer failure
+policy", merged 2026-08-26 and first released in 0.3.261. Per sample that
+separates a model failure from a scorer's chosen abstention. In aggregate it does not:
+`unscored_samples` is a single undifferentiated count, and an errored sample appears in neither
+coverage field. As a downstream consumer re-aggregating released results, that aggregate half is
+the piece we would most want.
+
+**On AgentDojo,** we measured the same policy defect on the released corpus, where the policy is
+one readable branch in `benchmark.py` (lines 129-130, 138-139, 146-147): a run that raises
+`context_length_exceeded` or a server error is written `utility = False, security = True` - a
+crash is published as an attack success and stays in the denominator, the opposite direction to
+the drop #4286 describes.
 
 Over 33,119 attacked runs this is worth 0.27 pp corpus-wide, which we state first. Per cell it is
 not: `command-r-plus` on workspace / `important_instructions` reports an **8.3%** injection-success

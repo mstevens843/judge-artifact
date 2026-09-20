@@ -1,0 +1,171 @@
+{
+  "analysis": {
+    "inspect_ai_version": "0.3.266",
+    "probes": [
+      {
+        "id": "errored_samples",
+        "issue_item": "#4286(1)",
+        "note": "headline unchanged, but total_samples vs completed_samples reveals the loss; the errored samples reach neither coverage field on the score",
+        "observed": {
+          "completed_samples": 5,
+          "coverage_counts": {
+            "scored_samples": 5,
+            "unscored_samples": 0
+          },
+          "errored_samples_counted_as_unscored": false,
+          "errored_samples_visible_in_results": true,
+          "headline_ignores_errored_samples": true,
+          "metrics": {
+            "accuracy": 1.0
+          },
+          "scored_samples": 5,
+          "status": "success",
+          "total_samples": 10,
+          "unscored_samples": 0
+        },
+        "title": "a sample that errored leaves the accuracy denominator",
+        "verdict": "PARTIAL"
+      },
+      {
+        "id": "abstained_samples",
+        "issue_item": "#4286(2)",
+        "note": "headline is 3/5 rather than 3/10, but scored_samples / unscored_samples now report the coverage beside it",
+        "observed": {
+          "accuracy_over_all_samples": 0.3,
+          "accuracy_over_scored_samples": 0.6,
+          "completed_samples": 10,
+          "coverage_counts": {
+            "scored_samples": 5,
+            "unscored_samples": 5
+          },
+          "coverage_reported": true,
+          "headline_excludes_abstentions": true,
+          "metrics": {
+            "accuracy": 0.6
+          },
+          "scored_samples": 5,
+          "status": "success",
+          "total_samples": 10,
+          "unscored_samples": 5
+        },
+        "title": "a scorer that abstains leaves the denominator too",
+        "verdict": "PARTIAL"
+      },
+      {
+        "id": "metric_range",
+        "issue_item": "#4286(3)",
+        "note": "no clamp and no finiteness check; infinity is not NaN, so it passes the unscored filter and is counted as a SCORED sample",
+        "observed": {
+          "accuracy_exceeds_one": true,
+          "accuracy_non_finite": true,
+          "infinity_counted_as_scored": true,
+          "rubric_0_to_10": {
+            "completed_samples": 3,
+            "coverage_counts": {
+              "scored_samples": 3,
+              "unscored_samples": 0
+            },
+            "metrics": {
+              "accuracy": 7.666666666666667,
+              "mean": 7.666666666666667
+            },
+            "scored_samples": 3,
+            "status": "success",
+            "total_samples": 3,
+            "unscored_samples": 0,
+            "values": [
+              8,
+              5,
+              10
+            ]
+          },
+          "with_infinity": {
+            "completed_samples": 3,
+            "coverage_counts": {
+              "scored_samples": 3,
+              "unscored_samples": 0
+            },
+            "metrics": {
+              "accuracy": "inf",
+              "mean": "inf"
+            },
+            "scored_samples": 3,
+            "status": "success",
+            "total_samples": 3,
+            "unscored_samples": 0,
+            "values": [
+              1.0,
+              0.0,
+              "inf"
+            ]
+          }
+        },
+        "title": "accuracy() is not range-bounded, so a headline can exceed 1 or be infinite",
+        "verdict": "OPEN"
+      },
+      {
+        "id": "metric_agreement",
+        "issue_item": "#4286(4)",
+        "note": "mean() now routes through value_to_float(), so the label no longer raises",
+        "observed": {
+          "both_metrics_present": true,
+          "completed_samples": 3,
+          "coverage_counts": {
+            "scored_samples": 3,
+            "unscored_samples": 0
+          },
+          "metrics": {
+            "accuracy": 1.0,
+            "mean": 1.0
+          },
+          "metrics_agree": true,
+          "scored_samples": 3,
+          "status": "success",
+          "total_samples": 3,
+          "unscored_samples": 0
+        },
+        "title": "mean() and accuracy() disagree on the framework's own C/I/P labels",
+        "verdict": "FIXED"
+      },
+      {
+        "id": "score_schema",
+        "issue_item": "#4286 design",
+        "note": "per sample the typed Score.reason separates them; in aggregate unscored_samples is a single undifferentiated count and errored samples are in neither coverage field",
+        "observed": {
+          "EvalScore_coverage_fields": [
+            "scored_samples",
+            "unscored_samples"
+          ],
+          "Score.reason_is_a_typed_field": true,
+          "ScoreReason_values": [
+            "invalid_response_format",
+            "refusal",
+            "no_response",
+            "grader_failed",
+            "scoring_failed"
+          ],
+          "abstentions_counted_in_unscored_samples": true,
+          "aggregate_channel_separates_them": false,
+          "errored_run_coverage_counts": {
+            "scored_samples": 5,
+            "unscored_samples": 0
+          },
+          "errored_run_total_samples": 10,
+          "errored_samples_counted_in_unscored_samples": false,
+          "per_sample_channel_separates_them": true
+        },
+        "title": "distinguishing a model failure from a scorer's chosen abstention",
+        "verdict": "PARTIAL"
+      }
+    ],
+    "substrate": "mockllm/model with a passthrough solver: no API key, no network, no judge",
+    "verdict_counts": {
+      "FIXED": 1,
+      "OPEN": 1,
+      "PARTIAL": 3
+    }
+  },
+  "arm": "D-inspect",
+  "receipt": "ja1_8291962e648e2dc1e537f9b38da5f191fc75693813b51a15ebd2d8fbc37fa851",
+  "source": "inspect_ai#4286 reproductions, run against the installed inspect-ai"
+}

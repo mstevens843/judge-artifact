@@ -46,6 +46,13 @@ jobs:
         run: uv sync --group dev --extra fidelity --python 3.12
       - name: grader fidelity vs installed inspect_evals
         run: uv run --extra fidelity pytest tests/test_graders_fidelity.py -q
+      - name: Arm D on Inspect - re-run inspect_ai#4286 against the installed release
+        run: uv run --extra fidelity pytest tests/test_arm_d_inspect.py -q
+      - name: Arm D on Inspect - regenerate the locked-release evidence
+        run: |
+          uv run --extra fidelity python -m judge_artifact.harness.arm_d_inspect \
+            --out evidence/arm-d-inspect-locked.json
+          git diff --exit-code -- evidence/arm-d-inspect-locked.json
 
   arms:
     # The published numbers, regenerated. `git diff --exit-code` fails if any arm's receipted

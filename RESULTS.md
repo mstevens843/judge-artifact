@@ -35,6 +35,7 @@ construction; for AgentDojo it is the released `security` oracle. Never the grad
 | Arm B broader important_instructions sweep | **15,781 runs** across banking, slack, travel and workspace; name-only reports **+9.69 pp**, over-credit decomposes **7.4% error-blind / 73.8% argument-blind / 18.8% effect-blind** |
 | Arm B defense axis - 28 pipelines | ranking **does** invert: Kendall tau **0.68**, 23 of 28 positions moved; adding the argument check restores it to **0.95** |
 | Arm D - 33,119 attacked runs, denominator policy | corpus-wide **0.27 pp**; one published cell is **100%** crashed runs |
+| Arm D on Inspect - #4286's own four reproductions re-run against `inspect-ai 0.3.266` | **1 OPEN / 3 PARTIAL / 1 FIXED**. The unbounded-metric item reproduces as filed: `[1, 0, inf] -> accuracy inf`, and because `inf` is not `NaN` it is counted as a SCORED sample |
 | Arm C - LLM judge nondeterminism | measured on 2026-09-01 through `inspect_ai` + `anthropic/claude-haiku-4-5-20251001` at temperature 1.0, n=30 per prompt: **0 flips**, pooled ASR **0.5000**, Wilson 95% **[0.3773, 0.6227]** |
 
 Arm C receipt:
@@ -202,10 +203,16 @@ implementation exactly.
   the unweighted mean of several components, only one of which is name-only. The +16.60 pp is what
   a single name-only success criterion costs; how much of an AgentHarm number it moves depends on
   how many components that task's score has. Not extrapolated here.
-- **Arm D is not a measurement of Inspect.** It measures the denominator-policy defect #4286
-  describes, on the corpus where the policy is verifiable at source. AgentDojo's policy is the
-  opposite of the one #4286 reports (it charges a crashed run as an attack success rather than
-  dropping it), and that is stated rather than elided.
+- **Arm D now has two substrates, and neither is a survey.** On AgentDojo it measures the
+  denominator-policy defect #4286 describes, on the corpus where the policy is verifiable at
+  source; AgentDojo's policy is the opposite of the one #4286 reports, charging a crashed run as
+  an attack success rather than dropping it. On Inspect itself it re-runs #4286's four
+  reproductions plus the schema question - five probes matched to one issue, not a survey of the
+  metric layer. A `PARTIAL` verdict there means the behaviour the issue describes still occurs
+  with the counts now reported beside it, not that the maintainers chose wrongly:
+  `--fail-on-error` and `--score-on-error` are documented controls that bound item 1 for a user
+  who sets them, and this arm measures the default path. Recorded in
+  [results/11](./results/11-inspect-denominator-measured.md).
 - **`arg_match` is a repair, not a sound grader.** It is fooled in both directions - it
   under-credits a call that errored non-fatally and still succeeded (2 real runs), and it
   over-credits a call carrying the attacker's arguments whose goal was not met (125 real runs).
@@ -232,6 +239,10 @@ uv run python -m judge_artifact.harness.arm_b            # decomposition on 3,98
 uv run python -m judge_artifact.harness.arm_b --broad-important-instructions
 uv run python -m judge_artifact.harness.arm_b_defense    # the defense axis and rank inversion
 uv run python -m judge_artifact.harness.arm_d            # denominator policy over 33,119 runs
+uv run --extra fidelity python -m judge_artifact.harness.arm_d_inspect \
+  --out evidence/arm-d-inspect-locked.json        # #4286 re-run on the locked inspect-ai
+uv run --python 3.12 --isolated --with inspect-ai==0.3.266 --with-editable . \
+  python -m judge_artifact.harness.arm_d_inspect --out evidence/arm-d-inspect.json
 uv run python -m judge_artifact.harness.arm_c --out /tmp/arm-c-readiness.json
 uv run --extra parser python -m judge_artifact.harness.parser_delta \
   --input tests/fixtures/parser-completions.jsonl \

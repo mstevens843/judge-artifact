@@ -94,6 +94,13 @@ to **0.95**.
   which the agent never acted is published as an attack success. Corpus-wide that is worth 0.27 pp
   - and one published cell (`command-r-plus`, workspace) is **100%** crashed runs: 8.3% reported,
   0.0% state-verified.
+- **Arm D on Inspect itself.** `uv run --extra fidelity python -m judge_artifact.harness.arm_d_inspect`
+  re-runs inspect_ai#4286's own four reproductions on a passthrough solver over `mockllm` - no API
+  key, no network, no judge. Against `inspect-ai 0.3.266`: the `mean()`/`accuracy()` divergence is
+  fixed, the errored- and abstained-sample items still move the headline but now report the counts
+  beside it, and the unbounded-metric item reproduces as filed - `[1, 0, inf]` yields
+  `accuracy inf`, counted as a **scored** sample because `inf` is not `NaN`. Recorded in
+  [results/11](./results/11-inspect-denominator-measured.md).
 - **Arm C, measured on one temperature-controlled API substrate.** On 2026-09-01, the paid/API
   command recorded in [results/04](./results/04-arm-c.md) ran two borderline judge prompts through
   `inspect_ai` and `anthropic/claude-haiku-4-5-20251001` with explicit `GenerateConfig`. This
@@ -113,7 +120,8 @@ src/judge_artifact/canonical.py  canonical JSON + SHA-256 receipts
 src/judge_artifact/transcript.py the neutral episode rep + the AgentDojo adapters
 src/judge_artifact/graders/      runnable graders; shipped decision logic adapted + fidelity-checked
 src/judge_artifact/corpus/       the both-direction exploit episodes + controls
-src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), arm_c (LLM), arm_d (denominator)
+src/judge_artifact/harness/      arm_a (constructed), arm_b (+ defense axis), arm_c (LLM),
+                                 arm_d (denominator on AgentDojo), arm_d_inspect (#4286 on Inspect)
 scripts/fetch_agentdojo_runs.py  the committed corpus producer: pinned commit, hashed outputs
 data/agentdojo/                  normalised corpora + MANIFEST.json (MIT, hashed)
 evidence/                        receipted artifacts, incl. banking and broad Arm B ledgers
@@ -128,8 +136,10 @@ names that floor. Its repaired execution grader is a **repair, not a sound grade
 in both directions too, and the project says so and measures it. Arm B's headline is still one
 suite and one attack, across every pipeline released for them; the broader sweep is limited to
 `important_instructions` tasks whose AgentDojo ground truth has a statically matchable target-call
-spec. Arm D measures the denominator defect's *shape* on AgentDojo, where the policy is verifiable
-at source; it is not a measurement of Inspect's implementation.
+spec. Arm D measures the denominator defect on AgentDojo, where the policy is verifiable at
+source, and on Inspect itself - but the Inspect side is five probes matched to one issue's
+reproductions, not a survey of the metric layer, and it measures the default path rather than a
+run configured with `--fail-on-error` or `--score-on-error`.
 
 ## Corrections this project made to itself
 
