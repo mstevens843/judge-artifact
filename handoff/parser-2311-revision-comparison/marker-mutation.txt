@@ -1,0 +1,22 @@
+Disposable copy; production source and snapshots untouched.
+Command: /Users/devlegacy/Desktop/projects/ai-gap-coverage-projects/third-party-systems/judge-artifact-parser-2311-20260922/.venv/bin/python -m pytest -q tests/test_parser_revisions.py::test_last_marker_regression tests/test_parser_revisions.py::test_single_marker_control
+
+MUTATED (expected exit 1):
+F.                                                                       [100%]
+=================================== FAILURES ===================================
+_________________________ test_last_marker_regression __________________________
+
+    def test_last_marker_regression() -> None:
+>       assert new.parse_grader_response_PR2311_361BB2E("answer: no. answer: yes") is True
+E       AssertionError: assert False is True
+E        +  where False = <function parse_grader_response_PR2311_361BB2E at 0x10401f6a0>('answer: no. answer: yes')
+E        +    where <function parse_grader_response_PR2311_361BB2E at 0x10401f6a0> = new.parse_grader_response_PR2311_361BB2E
+
+tests/test_parser_revisions.py:69: AssertionError
+=========================== short test summary info ============================
+FAILED tests/test_parser_revisions.py::test_last_marker_regression - Assertio...
+1 failed, 1 passed in 0.05s
+
+RESTORED (expected exit 0):
+..                                                                       [100%]
+2 passed in 0.03s

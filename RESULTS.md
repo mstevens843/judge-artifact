@@ -100,6 +100,21 @@ without Inspect. Ruff and strict mypy passed. The corpus rebuild, model, determi
 Arm C no-call smoke and both parser reports reproduced; no existing tracked data/evidence,
 dependency files or historical numbered notes changed.
 
+## Pinned parser revisions, 2026-09-22
+
+The unchanged 32 constructed cases now also have an explicit four-rule v3 comparison.
+Between PR `4698d4b` and `361bb2e`, one no becomes yes, one unparsed becomes yes, and one
+unparsed becomes no; 29 verdicts are unchanged. PR totals move from **11/9/12** to
+**13/9/10** (yes/no/unparsed). All 19 tagged verdicts and the single-marker reasoning
+limitation remain unchanged. Three separate supplemental controls have one flip in each
+direction and one unchanged rejection, including the target helper's markup-adjacent
+docstring example. These are parser observations, not semantic error or deployed harm rates.
+
+[Report, source binding and limitations](./results/11-parser-revision-comparison.md);
+[primary evidence](./evidence/parser-delta-revisions-constructed.json);
+[self-review and gates](./handoff/parser-2311-revision-comparison/SELF-REVIEW.md).
+Historical parser evidence and numbered reports remain unchanged.
+
 ## The headline, stated once
 
 A reported prompt-injection rate is `mean(judge(transcript) == success)`. Arm B measures one

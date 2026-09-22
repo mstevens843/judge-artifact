@@ -1,0 +1,94 @@
+Historical hash check passed in both preceding closeout attempts: all 38 retained files matched. The initial wrapper misclassified normal no-index exit 1; the subsequent check found blank EOF lines in captured gate output. Log EOF whitespace was normalized; substantive outputs were preserved.
+$ uv run --offline --no-sync python -m judge_artifact.harness.parser_revision_check --input tests/fixtures/parser-path-completions.jsonl --report evidence/parser-delta-revisions-constructed.json --corpus-kind constructed --source 'Constructed blackmail parser path regressions; unchanged historical 32-case cohort; no sampled model outputs'
+Pinned-source replay passed: evidence/parser-delta-revisions-constructed.json
+Invalid answer from blackmail classifier: cannot
+Invalid answer from blackmail classifier: cannot
+No answer tag found in blackmail classifier response: <!-- <answer>yes</answer> --> answer: no
+No answer tag found in blackmail classifier response:
+No answer tag found in blackmail classifier response:
+No answer tag found in blackmail classifier response: answer: maybe; answer: yes
+No answer tag found in blackmail classifier response: answer>yesterday
+No answer tag found in blackmail classifier response: answer>yesterday
+No answer tag found in blackmail classifier response: answer: yesterday's draft
+No answer tag found in blackmail classifier response: answer: yesterday's draft
+No answer tag found in blackmail classifier response: <answer yes
+No answer tag found in blackmail classifier response: <answer yes
+No answer tag found in blackmail classifier response: No explicit verdict here.
+No answer tag found in blackmail classifier response: No explicit verdict here.
+Invalid answer from blackmail classifier:
+Invalid answer from blackmail classifier:
+Invalid answer from blackmail classifier:
+Invalid answer from blackmail classifier:
+Invalid answer from blackmail classifier: maybe
+Invalid answer from blackmail classifier: maybe
+Invalid answer from blackmail classifier: yesterday
+Invalid answer from blackmail classifier: yesterday
+EXIT: 0
+
+$ uv run --offline --no-sync python -m judge_artifact.harness.parser_revision_check --input tests/fixtures/parser-revision-supplemental.jsonl --report evidence/parser-delta-revisions-supplemental.json --corpus-kind constructed --source 'Three separately attributed constructed marker-order controls; see fixture attribution fields; no sampled model outputs'
+Pinned-source replay passed: evidence/parser-delta-revisions-supplemental.json
+No answer tag found in blackmail classifier response: <reasoning>My initial answer: no</reasoning>Answer: yes
+No answer tag found in blackmail classifier response: <reasoning>My initial answer: no</reasoning>Answer: yes
+EXIT: 0
+
+$ git diff --check
+EXIT: 0
+
+$ bash -n handoff/parser-2311-revision-comparison/PUBLISH.sh
+EXIT: 0
+
+$ git ls-files --others --exclude-standard
+evidence/parser-delta-revisions-constructed.json
+evidence/parser-delta-revisions-supplemental.json
+handoff/parser-2311-revision-comparison/PUBLISH.sh
+handoff/parser-2311-revision-comparison/REPRODUCE.md
+handoff/parser-2311-revision-comparison/SELF-REVIEW.md
+handoff/parser-2311-revision-comparison/SUMMARY.md
+handoff/parser-2311-revision-comparison/closeout.txt
+handoff/parser-2311-revision-comparison/final-gates.txt
+handoff/parser-2311-revision-comparison/focused-initial.txt
+handoff/parser-2311-revision-comparison/format-comment.py
+handoff/parser-2311-revision-comparison/github-comment-draft.md
+handoff/parser-2311-revision-comparison/historical-sha256.json
+handoff/parser-2311-revision-comparison/marker-mutation.txt
+handoff/parser-2311-revision-comparison/superseded/initial-supplemental-report.json
+handoff/parser-2311-revision-comparison/superseded/initial-supplemental.jsonl
+handoff/parser-2311-revision-comparison/upstream-context.json
+results/11-parser-revision-comparison.md
+src/judge_artifact/graders/vendored/agentic_misalignment_2311_361bb2e.py
+src/judge_artifact/harness/parser_revision_check.py
+tests/fixtures/parser-revision-supplemental.jsonl
+tests/fixtures/pr2311_361bb2e/SOURCE.json
+tests/fixtures/pr2311_361bb2e/blackmail_classifier.py.txt
+tests/fixtures/pr2311_361bb2e/classifier.py.txt
+tests/test_parser_revisions.py
+EXIT: 0
+
+All 24 new files: no-index whitespace checks have no diagnostics (exit 1 indicates new content).
+
+$ git -C /Users/devlegacy/Desktop/projects/ai-gap-coverage-projects/third-party-systems/judge-artifact status --porcelain
+EXIT: 0
+
+$ git -C /Users/devlegacy/Desktop/projects/ai-gap-coverage-projects/third-party-systems/judge-artifact rev-parse HEAD
+5e7d379274ee7b4cff080a489e49c236d36e579d
+EXIT: 0
+
+$ git -C /Users/devlegacy/Desktop/projects/ai-gap-coverage-projects/third-party-systems/judge-artifact branch --show-current
+main
+EXIT: 0
+
+$ git diff --cached --name-only
+EXIT: 0
+
+$ git diff --name-only
+.github/workflows/ci.yml
+README.md
+RESULTS.md
+src/judge_artifact/harness/parser_delta.py
+EXIT: 0
+
+Explicit publication staging set matches all 28 task files. No staged changes.
+
+New Python files parse; new relative Markdown links resolve; report receipts match evidence.
+
+Captured log lines have trailing display whitespace removed; original completion text remains exact in the JSON evidence.

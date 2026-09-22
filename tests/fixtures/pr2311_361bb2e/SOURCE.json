@@ -1,0 +1,23 @@
+{
+  "commit": "361bb2ec1a06cc75b6914bda57f8f543d11062f9",
+  "commit_date": "2026-09-15T20:49:51Z",
+  "files": {
+    "blackmail_classifier.py": {
+      "contents_api": "https://api.github.com/repos/UKGovernmentBEIS/inspect_evals/contents/src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py?ref=361bb2ec1a06cc75b6914bda57f8f543d11062f9",
+      "git_blob": "06404d4da3b1adc2c2cbb4f465b7ea4f5b6e77a6",
+      "n_bytes": 5010,
+      "path": "src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py",
+      "raw_url": "https://raw.githubusercontent.com/UKGovernmentBEIS/inspect_evals/361bb2ec1a06cc75b6914bda57f8f543d11062f9/src/inspect_evals/agentic_misalignment/classifiers/blackmail_classifier.py",
+      "sha256": "94e1e765a10bf6ad611e2a10470d0327ab99a49317d1dd6b5016894166ed9dda"
+    },
+    "classifier.py": {
+      "contents_api": "https://api.github.com/repos/UKGovernmentBEIS/inspect_evals/contents/src/inspect_evals/agentic_misalignment/classifiers/classifier.py?ref=361bb2ec1a06cc75b6914bda57f8f543d11062f9",
+      "git_blob": "62b14596f57b750abcf58c65c49cda66e65e99a4",
+      "n_bytes": 7346,
+      "path": "src/inspect_evals/agentic_misalignment/classifiers/classifier.py",
+      "raw_url": "https://raw.githubusercontent.com/UKGovernmentBEIS/inspect_evals/361bb2ec1a06cc75b6914bda57f8f543d11062f9/src/inspect_evals/agentic_misalignment/classifiers/classifier.py",
+      "sha256": "8245ab8e354cd452e805c5a7c0728211013b853629356409379f0dc66c710b76"
+    }
+  },
+  "repository": "UKGovernmentBEIS/inspect_evals"
+}

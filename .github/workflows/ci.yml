@@ -94,5 +94,17 @@ jobs:
           --corpus-kind constructed
           --source "Constructed blackmail parser path regressions; no sampled model outputs"
           --compare-pr-2311
+      - name: Parser revisions - independent offline source replay
+        run: |
+          uv run --offline python -m judge_artifact.harness.parser_revision_check \
+            --input tests/fixtures/parser-path-completions.jsonl \
+            --report evidence/parser-delta-revisions-constructed.json \
+            --corpus-kind constructed \
+            --source "Constructed blackmail parser path regressions; unchanged historical 32-case cohort; no sampled model outputs"
+          uv run --offline python -m judge_artifact.harness.parser_revision_check \
+            --input tests/fixtures/parser-revision-supplemental.jsonl \
+            --report evidence/parser-delta-revisions-supplemental.json \
+            --corpus-kind constructed \
+            --source "Three separately attributed constructed marker-order controls; see fixture attribution fields; no sampled model outputs"
       - name: evidence must match the committed receipts
         run: git diff --exit-code -- evidence/

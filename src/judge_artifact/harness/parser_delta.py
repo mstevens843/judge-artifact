@@ -5,7 +5,8 @@ completions are retained as unparsed. Other fields are ignored but covered by th
 The receipted output embeds every completion and verdict, plus counts on a fixed denominator.
 Corpus provenance is required; even stored model outputs do not establish representativeness.
 Use --compare-pr-2311 for a three-rule report split by HTML parse path. Without it, the original
-two-rule v1 report remains byte-for-byte reproducible.
+two-rule v1 report remains byte-for-byte reproducible. --compare-pr-2311-revisions adds
+a separate four-rule v3 report for the historical and newer pinned PR revisions.
 """
 
 from __future__ import annotations
@@ -16,6 +17,7 @@ import json
 from collections.abc import Callable
 from dataclasses import dataclass
 from importlib.metadata import version
+from itertools import combinations
 from pathlib import Path
 from typing import Any
 
@@ -26,6 +28,7 @@ from ..graders.vendored.agentic_misalignment_2310 import InvalidAnswer
 VERDICTS = ("yes", "no", "unparsed")
 PARSE_PATHS = ("tag_present", "tag_absent")
 PATH_REPORT_RULES = ("substring", "pr_2311", "strict_exact")
+REVISION_REPORT_RULES = ("substring", "pr_2311_4698d4b", "pr_2311_361bb2e", "strict_exact")
 
 
 @dataclass(frozen=True)
@@ -66,7 +69,10 @@ def load_completions(path: Path) -> list[Completion]:
 
 def _verdict(parser: Callable[[str], bool], completion: str) -> tuple[str, str | None]:
     try:
-        return ("yes" if parser(completion) else "no"), None
+        verdict = parser(completion)
+        if type(verdict) is not bool:
+            raise TypeError("successful parser must return a real Boolean")
+        return ("yes" if verdict else "no"), None
     except InvalidAnswer as exc:
         return "unparsed", str(exc)
 
@@ -102,19 +108,18 @@ def _comparison(ledger: list[dict[str, Any]], before: str, after: str) -> dict[s
     }
 
 
-def _path_analysis(ledger: list[dict[str, Any]]) -> dict[str, Any]:
+def _path_analysis(
+    ledger: list[dict[str, Any]], rules: tuple[str, ...] = PATH_REPORT_RULES,
+) -> dict[str, Any]:
     return {
         "n_total": len(ledger),
         "rules": {
             name: _summary([row[f"{name}_verdict"] for row in ledger])
-            for name in PATH_REPORT_RULES
+            for name in rules
         },
         "comparisons": {
             f"{before}_to_{after}": _comparison(ledger, before, after)
-            for before, after in (
-                ("substring", "pr_2311"), ("substring", "strict_exact"),
-                ("pr_2311", "strict_exact"),
-            )
+            for before, after in combinations(rules, 2)
         },
     }
 
@@ -156,9 +161,58 @@ def _add_pr_comparison(report: dict[str, Any]) -> None:
     }
 
 
+def _add_revision_comparison(report: dict[str, Any]) -> None:
+    from ..graders.vendored import agentic_misalignment_2311 as old
+    from ..graders.vendored import agentic_misalignment_2311_361bb2e as new
+
+    revisions = (
+        ("pr_2311_4698d4b", old.parse_grader_response_PR2311, old.PR2311_REVISION,
+         old.PR2311_SOURCE_SHA256, "first"),
+        ("pr_2311_361bb2e", new.parse_grader_response_PR2311_361BB2E,
+         new.PR2311_361BB2E_REVISION, new.PR2311_361BB2E_SOURCE_SHA256, "last"),
+    )
+    ledger = report["individual_completions"]
+    for row in ledger:
+        row["parse_path"] = parse_path(row["completion"])
+        for name, parser, _, _, _ in revisions:
+            row[f"{name}_verdict"], row[f"{name}_error"] = _verdict(parser, row["completion"])
+        for name in REVISION_REPORT_RULES:
+            row[f"{name}_parse_path"] = row["parse_path"]
+    for name, _, pin, hashes, marker in revisions:
+        report["parsers"][name] = {
+            "rule": f"first token with punctuation stripped; {marker} answer-marker fallback",
+            "repository": "UKGovernmentBEIS/inspect_evals",
+            "commit": pin,
+            "source_sha256": {
+                f"{old.PR2311_SOURCE_ROOT}/{filename}": digest
+                for filename, digest in sorted(hashes.items())
+            },
+        }
+    report["schema"] = "parser-delta-revisions-v3"
+    report["classifier_scope"] = "BlackmailClassifier.parse_grader_response only"
+    report["analysis"] = {
+        "denominator": "all records within each scope; unparsed remains a separate verdict",
+        "parse_path_definition": "first BeautifulSoup answer element exists, including empty tags",
+        "failure_policy": "only InvalidAnswer rejections recorded; no classify gates or scorer run",
+        "overall": _path_analysis(ledger, REVISION_REPORT_RULES),
+        "by_parse_path": {
+            path: _path_analysis(
+                [row for row in ledger if row["parse_path"] == path], REVISION_REPORT_RULES,
+            ) for path in PARSE_PATHS
+        },
+        "changed_completion_ids_old_pr_to_new_pr": [
+            row["id"] for row in ledger
+            if row["pr_2311_4698d4b_verdict"] != row["pr_2311_361bb2e_verdict"]
+        ],
+    }
+
+
 def build_report(
     input_path: Path, *, corpus_kind: str, source: str, compare_pr_2311: bool = False,
+    compare_pr_2311_revisions: bool = False,
 ) -> dict[str, Any]:
+    if compare_pr_2311 and compare_pr_2311_revisions:
+        raise ValueError("comparison modes are mutually exclusive")
     if corpus_kind not in {"constructed", "stored"}:
         raise ValueError("corpus_kind must be constructed or stored")
     if not source.strip():
@@ -213,6 +267,9 @@ def build_report(
     }
     if compare_pr_2311:
         _add_pr_comparison(report)
+    if compare_pr_2311_revisions:
+        report["corpus"]["input_n_bytes"] = len(raw)
+        _add_revision_comparison(report)
     report["receipt"] = receipt(report)
     return report
 
@@ -223,9 +280,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--corpus-kind", choices=("constructed", "stored"), required=True)
     parser.add_argument("--source", required=True, help="provenance and selection of the input set")
-    parser.add_argument(
+    modes = parser.add_mutually_exclusive_group()
+    modes.add_argument(
         "--compare-pr-2311", action="store_true",
         help="compare the pinned blackmail PR parser and split results by HTML parse path",
+    )
+    modes.add_argument(
+        "--compare-pr-2311-revisions", action="store_true",
+        help="compare both pinned PR revisions on identical completions (v3)",
     )
     args = parser.parse_args(argv)
     try:
@@ -236,17 +298,19 @@ def main(argv: list[str] | None = None) -> int:
         report = build_report(
             args.input, corpus_kind=args.corpus_kind, source=args.source,
             compare_pr_2311=args.compare_pr_2311,
+            compare_pr_2311_revisions=args.compare_pr_2311_revisions,
         )
         args.out.parent.mkdir(parents=True, exist_ok=True)
         args.out.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     except (OSError, ValueError) as exc:
         parser.error(str(exc))
     print(f"{args.corpus_kind} corpus: {report['corpus']['n']} completions")
-    if args.compare_pr_2311:
+    if args.compare_pr_2311 or args.compare_pr_2311_revisions:
         analysis = report["analysis"]
         for scope, cell in {"overall": analysis["overall"], **analysis["by_parse_path"]}.items():
             print(f"{scope}: n={cell['n_total']}")
-            for name in PATH_REPORT_RULES:
+            rules = REVISION_REPORT_RULES if args.compare_pr_2311_revisions else PATH_REPORT_RULES
+            for name in rules:
                 print(f"  {name}: {cell['rules'][name]['counts']}")
     else:
         for name in ("substring", "strict_exact"):

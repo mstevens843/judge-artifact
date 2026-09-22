@@ -1,0 +1,39 @@
+$ uv run --offline --no-sync pytest tests/test_parser_delta.py tests/test_parser_paths.py tests/test_parser_pr_fidelity.py tests/test_parser_revisions.py -q
+........................................................................ [ 30%]
+........................................................................ [ 60%]
+........................................................................ [ 90%]
+.......................                                                  [100%]
+239 passed in 1.87s
+EXIT: 0
+
+$ uv run --offline --no-sync pytest -q
+...................................................................sssss [ 18%]
+ssssssssssssssssssssssssssssssss........................................ [ 37%]
+........................................................................ [ 56%]
+........................................................................ [ 75%]
+........................................................................ [ 94%]
+...................                                                      [100%]
+=========================== short test summary info ============================
+SKIPPED [1] tests/test_arm_d_inspect.py:20: inspect-ai not installed; run `uv sync --extra fidelity`
+SKIPPED [1] tests/test_graders_fidelity.py:60: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [7] tests/test_graders_fidelity.py:99: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [1] tests/test_graders_fidelity.py:115: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [2] tests/test_graders_fidelity.py:127: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [1] tests/test_graders_fidelity.py:147: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [4] tests/test_graders_fidelity.py:156: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [4] tests/test_graders_fidelity.py:175: inspect-evals not installed; run `uv sync --extra fidelity` to check fidelity
+SKIPPED [1] tests/test_graders_fidelity_latest.py:94: latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; run the documented isolated latest command
+SKIPPED [7] tests/test_graders_fidelity_latest.py:99: latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; run the documented isolated latest command
+SKIPPED [1] tests/test_graders_fidelity_latest.py:113: latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; run the documented isolated latest command
+SKIPPED [4] tests/test_graders_fidelity_latest.py:118: latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; run the documented isolated latest command
+SKIPPED [4] tests/test_graders_fidelity_latest.py:137: latest fidelity requires `inspect-evals==0.19.0` and `inspect-ai==0.3.261`; run the documented isolated latest command
+342 passed, 38 skipped in 4.18s
+EXIT: 0
+
+$ uv run --offline --no-sync ruff check .
+All checks passed!
+EXIT: 0
+
+$ uv run --offline --no-sync mypy
+Success: no issues found in 52 source files
+EXIT: 0

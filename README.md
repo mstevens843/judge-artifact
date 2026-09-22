@@ -77,7 +77,10 @@ to **0.95**.
   [results/09](./results/09-grader-followup-regressions.md). The optional `--compare-pr-2311`
   mode adds a pinned PR comparator and separate tag-present/tag-absent counts on 32 constructed
   cases, with offline source-snapshot fidelity checks; see
-  [results/10](./results/10-parser-paths-and-pr2311.md).
+  [results/10](./results/10-parser-paths-and-pr2311.md). A separate
+  `--compare-pr-2311-revisions` mode retains both PR pins on the unchanged 32 cases;
+  [results/11](./results/11-parser-revision-comparison.md) reports three changed verdicts,
+  independent offline replay, and three separately attributed supplemental controls.
 - **Arm A, both directions, deterministic.** `uv run python -m judge_artifact.harness.arm_a` runs
   the real graders over a constructed corpus and matches the prediction on every cell. The
   execution family is a ladder - name only, name + no error, name + attacker's arguments, state -
